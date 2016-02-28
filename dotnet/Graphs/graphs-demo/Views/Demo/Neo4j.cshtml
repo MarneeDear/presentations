@@ -37,10 +37,20 @@
             forceLocked: false,
             graphHeight: function () { return 640; },
             graphWidth: function () { return 700; },
-            linkDistance: function () { return 20; },
-            
+            linkDistance: function () { return 20; },            
             nodeCaption: function (node) {
                 return node.caption;
+            },
+            nodeTypes: { "type":
+                ["person", "thing"]
+            },
+            nodeStyle: {
+                "person":{
+                   "color": "#000067"
+                },
+                "thing": {
+                    "color": "#127DC1"
+                }
             }
         };
 

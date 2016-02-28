@@ -43,7 +43,7 @@ namespace graphs_demo.Models
     {
         public int id { get; set; }
         public string caption { get; set; }
-        public string role { get; set; }
+        public string type { get; set; }
         public string fun_fact { get; set; }
         public bool root { get; set; }
     }
@@ -56,7 +56,7 @@ namespace graphs_demo.Models
     }
 
     public class Person
-    {
+    {        
         public int id { get; set; }
         public string name { get; set; }
     }

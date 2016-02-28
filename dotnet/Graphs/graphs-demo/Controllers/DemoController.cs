@@ -52,7 +52,7 @@ namespace graphs_demo.Controllers
             IList<AlchemyNode> nodeList = new List<AlchemyNode>();
             IList<AlchemyEdge> edgeList = new List<AlchemyEdge>();
             //get relationships and setup alchemy json model
-            model.comment = "Julian Likes";
+            //model.comment = "Julian Likes";
             _neo4jClient.Connect();
             var queryResults = _neo4jClient.Cypher
                 .OptionalMatch("(person:PERSON)-[LIKES]-(thing:THING)")
@@ -64,10 +64,12 @@ namespace graphs_demo.Controllers
                 })
                 .Results;
 
-            foreach(var rel in queryResults)
+            foreach (var rel in queryResults)
             {
-                nodeList.Add(new AlchemyNode { id = rel.Person.id, caption = rel.Person.name });
-                nodeList.Add(new AlchemyNode { id = rel.Thing.id, caption = rel.Thing.name });
+                if (!nodeList.Where(n => n.id == rel.Person.id).Any())
+                    nodeList.Add(new AlchemyNode { id = rel.Person.id, type = "person", caption = rel.Person.name });
+                if (!nodeList.Where(n => n.id == rel.Thing.id).Any())
+                    nodeList.Add(new AlchemyNode { id = rel.Thing.id, type = "thing", caption = rel.Thing.name });
                 edgeList.Add(new AlchemyEdge { source = rel.Person.id, target = rel.Thing.id, caption = "LIKES" });
             }
 
