@@ -1,6 +1,10 @@
 # presentations
 Presentations I have done for Tucson Python and .Net Users Group
 
+http://www.meetup.com/Tucson-Python-Meetup/
+
+http://tucsondotnet.azurewebsites.net/
+
 .Net
 
 * SpecFlow -- a talk on Behavior Driven Development using SpecFlow (June 20015)
