@@ -16,7 +16,11 @@ namespace graphs_demo.Controllers
         // GET: Demo
         public ActionResult Index()
         {
-            AlchemyDemoModel alchemy = JsonConvert.DeserializeObject<AlchemyDemoModel>(System.IO.File.ReadAllText(@"C:\Users\Marnee Dearman\Dropbox\presentations2\presentations\dotnet\Graphs\graphs-demo\demo\data\contrib.json"));
+            string path_to_json = HttpContext.Server.MapPath("/demo/Data/contrib.json");
+            //.ReadAllText(@"C:\Users\Marnee Dearman\Dropbox\presentations2\presentations\dotnet\Graphs\graphs-demo\demo\data\contrib.json"));
+            AlchemyDemoModel alchemy = JsonConvert
+                .DeserializeObject<AlchemyDemoModel>(System.IO.File
+                .ReadAllText(path_to_json));
             ViewBag.Comment = alchemy.comment;
 
             return View(alchemy);
