@@ -1,24 +1,34 @@
-﻿<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index2</title>
-</head>
-<body>
-    <div id="alchemy" class="alchemy" ></div>
-    <script type="text/javascript" src="http://cdn.graphalchemist.com/alchemy.min.js">
-    </script>
-    <div class="alchemy" id="alchemy"></div>
-
+﻿@model graphs_demo.Models.AlchemyDemoModel
+<h1>@ViewBag.Comment</h1>
+<script type="text/javascript" src="http://cdn.graphalchemist.com/alchemy.min.js">
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="alchemy col-md-6" id="alchemy"></div>
+        <div class="col-md-6">           
+            <p><strong>PROJECT</strong></p>
+            <p>@Model.nodes.Where(n => n.root).First().caption</p>
+            
+            <p><strong>CONTRIBUTORS</strong></p>
+            @foreach (var node in Model.nodes)
+            {
+                if (!node.root)
+                {
+                    <p>@node.id @node.caption @node.fun_fact</p>
+                    <p>@Model.edges.Where(e => e.source.Equals(node.id)).First().caption</p>
+                }
+            }
+        </div>
+    </div>
+</div>
     <script src="http://cdn.graphalchemist.com/alchemy.min.js"></script>
     <script type="text/javascript">
         var config = {
-            dataSource: 'data/contrib.json',
+            dataSource: '/Demo/ContribModel',
             forceLocked: false,
-            graphHeight: function () { return 800; },
-            graphWidth: function () { return 1000; },
-            linkDistance: function () { return 40; },
+            graphHeight: function () { return 500; },
+            graphWidth: function () { return 500; },
+            linkDistance: function () { return 20; },
             nodeTypes: {
                 "node_type": ["Maintainer",
                         "Contributor"]
@@ -31,7 +41,3 @@
         alchemy = new Alchemy(config)
     </script>
 
-   
-</body>
-
-</html>

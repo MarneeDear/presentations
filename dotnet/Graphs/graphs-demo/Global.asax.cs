@@ -1,20 +1,25 @@
-﻿using System.Web;
-using System.Web.Http;
+﻿
+using Neo4jClient;
+using System;
+using System.Configuration;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
 namespace graphs_demo
 {
-    public class MvcApplication : HttpApplication
+    public class MvcApplication : System.Web.HttpApplication
     {
+        public static IGraphClient _neo4jClient;
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            _neo4jClient = new GraphClient(new Uri(ConfigurationManager.ConnectionStrings["Graphene"].ConnectionString));
+            Glimpse.Neo4jClient.Plugin.RegisterGraphClient(_neo4jClient);
         }
     }
 }
