@@ -3,9 +3,9 @@ Presentations I have done for Tucson Python and .Net Users Group
 
 .Net
 
-* SpecFlow -- a talk on Behavior Driven Development using SpecFlow
-* TBD Graphs and the Neo4j Client
+* SpecFlow -- a talk on Behavior Driven Development using SpecFlow (June 20015)
+* TBD Graphs and the Neo4j Client (April 2016)
 
 Python
 
-* Py2neo -- a talk on graphs, graph databases, Neo4j, and the Neo4j python client, Py2neo
+* Py2neo -- a talk on graphs, graph databases, Neo4j, and the Neo4j python client, Py2neo (Feb 2016)
