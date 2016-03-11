@@ -164,13 +164,16 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CustodyTransferController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IVRController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AlchemyDemoModel.cs" />
+    <Compile Include="Models\IVRModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +231,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Demo\Index.cshtml" />
     <Content Include="Views\Demo\Index - Copy.cshtml" />
-    <Content Include="Views\Demo\Neo4j.cshtml" />
+    <Content Include="Views\Demo\SimpleLikes.cshtml" />
+    <Content Include="Views\CustodyTransfer\Index.cshtml" />
+    <Content Include="Views\IVR\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
