@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Custody Transfer";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal">
+        <h4>Drill into Custody Transfer graph</h4>
+        <hr />
+        <div class="row">
+            <div class="alchemy col-md-9" id="alchemy"></div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="col-md-6">
+                       
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+}
+<script src="http://cdn.graphalchemist.com/alchemy.min.js"></script>
+<script type="text/javascript">
+        var config = {
+            dataSource: '/Demo/____',
+            forceLocked: false,
+            graphHeight: function () { return 640; },
+            graphWidth: function () { return 700; },
+            linkDistance: function () { return 20; },
+            nodeCaption: function (node) {
+                return node.caption;
+            },
+            nodeTypes: { "type":
+                ["person", "thing"]
+            },
+            nodeStyle: {
+                "person":{
+                   "color": "#000067"
+                },
+                "thing": {
+                    "color": "#127DC1"
+                }
+            }
+        };
+
+        alchemy = new Alchemy(config)
+</script>
