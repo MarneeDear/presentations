@@ -5,9 +5,15 @@ using System.Web;
 
 namespace graphs_demo.Models
 {
+    public class IVRModel
+    {
+        public IVRMessage WelcomeMessage { get; set; }
+        public IVRMessage OptionMessage { get; set; }
+    }
+
     public class IVRMessage
     {
-        public Guid id { get; set; }
+        public Guid? id { get; set; }
         public string message { get; set; }
     }
 

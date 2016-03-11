@@ -14,12 +14,39 @@ namespace graphs_demo.Controllers
         private IGraphClient _neo4jClient = MvcApplication._neo4jClient;
 
         // GET: IVR
+        [HttpGet]
         public ActionResult Index(bool clear = false)
         {
             if (clear)
                 ClearGraph();
-
+            //TODO Get current welcome message for IVR
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Index(string create_welcome, string create_option, IVRModel model)
+        {
+            //TODO GET LIST OF option messages from the graph 
+            //Maybe do this as a tuple of previous and next so user knows what he is doing
+            //MAYBE show path in the viz
+            //USER will add a message to the "next" message in that tuple
+
+            TryUpdateModel(model);
+            //TryUpdateModel(model.OptionMessage);
+            if (!string.IsNullOrEmpty(create_welcome))
+                CreateIVRWelcomeMessage(model.WelcomeMessage);
+
+            if (!string.IsNullOrEmpty(create_option))
+            {
+                CreateIVRMessage(model.OptionMessage);
+
+                //START from the ROOT node (WELCOME)
+                AddMessageToWelcome(model.WelcomeMessage.id.Value, model.OptionMessage.id.Value);
+            }
+
+            //TODO add next message to message
+
+            return View(model);
         }
 
         public JsonResult FullGraph()
@@ -36,7 +63,7 @@ namespace graphs_demo.Controllers
 
             _neo4jClient.Connect();
             var queryResults = _neo4jClient.Cypher
-                .Match("(welcome:WELCOME)-[HAS_OPTION]-(message:MESSAGE)")
+                .OptionalMatch("(welcome:WELCOME)-[HAS_OPTION]-(message:MESSAGE)")
                 .Return((welcome, message) =>
                 new
                 {
@@ -44,27 +71,38 @@ namespace graphs_demo.Controllers
                     Message = message.As<IVRMessage>()
                 }).Results;
 
+            //TODO if no next messages just get the welcome message or do an optional match?
+
             //BUILD the JSON for Alchemy
             foreach (var rel in queryResults)
             {
-                if (!nodeList.Where(n => n.id == rel.Message.id).Any())
+                //check that there is a next message first and then build the alchemy model
+                if (rel.Message != null)
                 {
-                    nodeList.Add(new AlchemyIVRNode { id = rel.Message.id,
-                        type = "message",
-                        caption = rel.Message.message });
+                    if (!nodeList.Where(n => n.id == rel.Message.id).Any())
+                    {
+                        nodeList.Add(new AlchemyIVRNode
+                        {
+                            id = rel.Message.id.Value,
+                            type = "message",
+                            caption = rel.Message.message
+                        });
+                    }
+
+                    edgeList.Add(new AlchemyIVREdge
+                    {
+                        source = rel.Welcome.id.Value,
+                        target = rel.Message.id.Value,
+                        caption = "OPTION"
+                    });
                 }
                 if (!nodeList.Where(n => n.id == rel.Welcome.id).Any())
                 {
-                    nodeList.Add(new AlchemyIVRNode { id = rel.Welcome.id,
+                    nodeList.Add(new AlchemyIVRNode { id = rel.Welcome.id.Value,
                         type = "welcome", root = true,
                         caption = rel.Welcome.message });
                 }
-                edgeList.Add(new AlchemyIVREdge
-                {
-                    source = rel.Welcome.id,
-                    target = rel.Message.id,
-                    caption = "OPTION"
-                });
+                
             }
             model.edges = edgeList;
             model.nodes = nodeList;
@@ -72,57 +110,60 @@ namespace graphs_demo.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-        private void AddMessageToMessage(Guid message_id, IVRMessage message_model)
+        private void AddMessageToMessage(Guid start_message_id, Guid next_message_id)
         {
-            CreateIVRMessage(message_model);
+            //CreateIVRMessage(message_model);
             _neo4jClient.Connect();
             _neo4jClient.Cypher
-                .Match("(welcome:WELCOME)", "(message:MESSAGE)")
-                .Where((IVRMessage start_message) => start_message.id == message_id)
-                .AndWhere((IVRMessage next_message) => next_message.id == message_model.id)
+                .Match("(message:MESSAGE)", "(message:MESSAGE)")
+                .Where((IVRMessage start_message) => start_message.id == start_message_id)
+                .AndWhere((IVRMessage next_message) => next_message.id == next_message_id)
                 .CreateUnique("welcome-[:HAS_OPTION]->message")
                 .ExecuteWithoutResults();
         }
 
-        private void AddMessageToWelcome(Guid welcome_id, IVRMessage message_model)
+        private void AddMessageToWelcome(Guid welcome_id, Guid message_id)
         {
-            CreateIVRMessage(message_model);
+            //CreateIVRMessage(message_model);
             _neo4jClient.Connect();
             _neo4jClient.Cypher
                 .Match("(welcome:WELCOME)", "(message:MESSAGE)")
                 .Where((IVRMessage welcome) => welcome.id == welcome_id)
-                .AndWhere((IVRMessage message) => message.id == message_model.id)
+                .AndWhere((IVRMessage message) => message.id == message_id)
                 .CreateUnique("welcome-[:HAS_OPTION]->message")
                 .ExecuteWithoutResults();
         }
 
-        private void CreateIVRMessage(IVRMessage message)
+        private void CreateIVRMessage(IVRMessage messageNode)
         {
-            message.id = Guid.NewGuid();
-            var messageNode = new IVRMessage { id = message.id, message = message.message };
+            messageNode.id = Guid.NewGuid();
+            //var messageNode = new IVRMessage { id = message.id, message = message.message };
             _neo4jClient.Cypher
                 .Merge("(message:MESSAGE {id: {id}, message:{message} })")
                 .OnCreate()
                 .Set("message = {messageNode}")
                 .WithParams(new
                 {
-                    id = message.id,
-                    message = message.message
+                    id = messageNode.id,
+                    message = messageNode.message,
+                    messageNode
                 }).ExecuteWithoutResults();
         }
 
-        private void CreateIVRWelcomeMessage(IVRMessage message)
+        private void CreateIVRWelcomeMessage(IVRMessage messageNode)
         {
             _neo4jClient.Connect();
-            var messageNode = new IVRMessage { id=Guid.NewGuid(), message = message.message };
+            messageNode.id = Guid.NewGuid();
+            //var messageNode = new IVRMessage { id=Guid.NewGuid(), message = message.message };
             _neo4jClient.Cypher
-                .Merge("(message:WELCOME {message: {message}}")
+                .Merge("(message:WELCOME {message: {message} })")
                 .OnCreate()
                 .Set("message = {messageNode}")
                 .WithParams(new
                 {
-                    id = message.id,
-                    message = message.message
+                    id = messageNode.id,
+                    message = messageNode.message,
+                    messageNode
                 }).ExecuteWithoutResults();
             
         }

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using graphs_demo.Models
+@model IVRModel
+@{
     ViewBag.Title = "Interactive Voice Response Graph";
 }
 
@@ -11,41 +13,53 @@
             <div class="alchemy col-md-9" id="alchemy"></div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <div class="col-md-6">
-
+                    <div class="col-md-3">
+                        Welcome Message
+                        @Html.TextAreaFor(m => Model.WelcomeMessage.message)
+                        <input type="submit" value="Create Welcome Message" name="create_welcome" class="btn btn-primary" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-md-6">
-
+                    <div class="col-md-3">
+                        WELCOME MESSAGE:
+                        @Html.DisplayFor(m => Model.WelcomeMessage.message)
+                        @Html.HiddenFor(m => Model.WelcomeMessage.id)
+                        Option Message                        
+                        @Html.TextAreaFor(m => Model.OptionMessage.message)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <input type="submit" value="Create Option Message" name="create_option" class="btn btn-primary" />
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
-    @Html.AntiForgeryToken()
+            @Html.AntiForgeryToken()
 }
 <script src="http://cdn.graphalchemist.com/alchemy.min.js"></script>
 <script type="text/javascript">
-        var config = {
-            dataSource: '/IVR/Welcome',
-            forceLocked: false,
-            graphHeight: function () { return 640; },
-            graphWidth: function () { return 700; },
-            linkDistance: function () { return 20; },
-            nodeCaption: function (node) {
-                return node.caption;
-            },
-            nodeTypes: { "type":
+    var config = {
+        dataSource: '/IVR/Welcome',
+        forceLocked: false,
+        graphHeight: function () { return 640; },
+        graphWidth: function () { return 700; },
+        linkDistance: function () { return 20; },
+        nodeCaption: function (node) {
+            return node.caption;
+        },
+        nodeTypes: {
+            "type":
                 ["message"]
-            },
-            nodeStyle: {
-                "message":{
-                   "color": "#000067"
-                }
+        },
+        nodeStyle: {
+            "message": {
+                "color": "#000067"
             }
-        };
+        }
+    };
 
-        alchemy = new Alchemy(config)
+    alchemy = new Alchemy(config)
 </script>
