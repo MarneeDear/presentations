@@ -14,17 +14,17 @@ namespace graphs_demo.Controllers
     {
         private IGraphClient _neo4jClient = MvcApplication._neo4jClient;
         // GET: Demo
-        //public ActionResult Index()
-        //{
-        //    string path_to_json = HttpContext.Server.MapPath("/demo/Data/contrib.json");
-        //    //.ReadAllText(@"C:\Users\Marnee Dearman\Dropbox\presentations2\presentations\dotnet\Graphs\graphs-demo\demo\data\contrib.json"));
-        //    AlchemyDemoModel alchemy = JsonConvert
-        //        .DeserializeObject<AlchemyDemoModel>(System.IO.File
-        //        .ReadAllText(path_to_json));
-        //    ViewBag.Comment = alchemy.comment;
+        public ActionResult Index()
+        {
+            string path_to_json = HttpContext.Server.MapPath("/demo/Data/contrib.json");
+            //.ReadAllText(@"C:\Users\Marnee Dearman\Dropbox\presentations2\presentations\dotnet\Graphs\graphs-demo\demo\data\contrib.json"));
+            AlchemyDemoModel alchemy = JsonConvert
+                .DeserializeObject<AlchemyDemoModel>(System.IO.File
+                .ReadAllText(path_to_json));
+            ViewBag.Comment = alchemy.comment;
 
-        //    return View(alchemy);
-        //}
+            return View(alchemy);
+        }
 
         [HttpGet]
         public ActionResult SimpleLikes(bool setup = false)
@@ -67,15 +67,22 @@ namespace graphs_demo.Controllers
                     Thing = thing.As<Thing>()
                 })
                 .Results;
-
+            
             foreach (var rel in queryResults)
             {
-                if (!nodeList.Where(n => n.id == rel.Person.id).Any())
-                    nodeList.Add(new AlchemyNode { id = rel.Person.id, type = "person",
-                        caption = rel.Person.name });
-                if (!nodeList.Where(n => n.id == rel.Thing.id).Any())
-                    nodeList.Add(new AlchemyNode { id = rel.Thing.id, type = "thing", caption = rel.Thing.name });
-                edgeList.Add(new AlchemyEdge { source = rel.Person.id, target = rel.Thing.id, caption = "LIKES" });
+                if (rel.Person != null && rel.Thing != null)
+                {
+                    if (!nodeList.Where(n => n.id == rel.Person.id).Any())
+                        nodeList.Add(new AlchemyNode
+                        {
+                            id = rel.Person.id,
+                            type = "person",
+                            caption = rel.Person.name
+                        });
+                    if (!nodeList.Where(n => n.id == rel.Thing.id).Any())
+                        nodeList.Add(new AlchemyNode { id = rel.Thing.id, type = "thing", caption = rel.Thing.name });
+                    edgeList.Add(new AlchemyEdge { source = rel.Person.id, target = rel.Thing.id, caption = "LIKES" });
+                }
             }
 
             model.edges = edgeList;

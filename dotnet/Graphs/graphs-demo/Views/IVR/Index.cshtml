@@ -13,23 +13,21 @@
             <div class="alchemy col-md-9" id="alchemy"></div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         Welcome Message
                         @Html.TextAreaFor(m => Model.WelcomeMessage.message)
+                        @Html.HiddenFor(m => Model.WelcomeMessage.id)
                         <input type="submit" value="Create Welcome Message" name="create_welcome" class="btn btn-primary" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-md-3">
-                        WELCOME MESSAGE:
-                        @Html.DisplayFor(m => Model.WelcomeMessage.message)
-                        @Html.HiddenFor(m => Model.WelcomeMessage.id)
+                    <div class="col-md-6">
                         Option Message                        
                         @Html.TextAreaFor(m => Model.OptionMessage.message)
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <input type="submit" value="Create Option Message" name="create_option" class="btn btn-primary" />
                     </div>
                 </div>

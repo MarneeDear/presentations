@@ -20,7 +20,9 @@ namespace graphs_demo.Controllers
             if (clear)
                 ClearGraph();
             //TODO Get current welcome message for IVR
-            return View();
+            IVRModel model = new IVRModel();
+            model.WelcomeMessage = GetWelcomeMessage();
+            return View(model);
         }
 
         [HttpPost]
@@ -44,8 +46,9 @@ namespace graphs_demo.Controllers
                 AddMessageToWelcome(model.WelcomeMessage.id.Value, model.OptionMessage.id.Value);
             }
 
+            //TODO get list of message linked to the welcome message
             //TODO add next message to message
-
+            ModelState.Clear();
             return View(model);
         }
 
@@ -63,6 +66,7 @@ namespace graphs_demo.Controllers
 
             _neo4jClient.Connect();
             var queryResults = _neo4jClient.Cypher
+                .Match("(welcome:WELCOME)") //-[HAS_OPTION]-(message:MESSAGE)")
                 .OptionalMatch("(welcome:WELCOME)-[HAS_OPTION]-(message:MESSAGE)")
                 .Return((welcome, message) =>
                 new
@@ -74,6 +78,8 @@ namespace graphs_demo.Controllers
             //TODO if no next messages just get the welcome message or do an optional match?
 
             //BUILD the JSON for Alchemy
+
+
             foreach (var rel in queryResults)
             {
                 //check that there is a next message first and then build the alchemy model
@@ -166,6 +172,16 @@ namespace graphs_demo.Controllers
                     messageNode
                 }).ExecuteWithoutResults();
             
+        }
+
+        private IVRMessage GetWelcomeMessage()
+        {
+            _neo4jClient.Connect();
+            var query_results = _neo4jClient.Cypher
+                .Match("(welcome:WELCOME)")
+                .Return(welcome => welcome.As<IVRMessage>())
+                .Results;
+            return query_results.FirstOrDefault();
         }
 
         private void ClearGraph()
