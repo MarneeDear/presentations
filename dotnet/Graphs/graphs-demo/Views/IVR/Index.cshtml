@@ -17,7 +17,10 @@
                         Welcome Message
                         @Html.TextAreaFor(m => Model.WelcomeMessage.message)
                         @Html.HiddenFor(m => Model.WelcomeMessage.id)
+                        @if (Model.WelcomeMessage.id == null)
+                        {
                         <input type="submit" value="Create Welcome Message" name="create_welcome" class="btn btn-primary" />
+                        }
                     </div>
                 </div>
                 <div class="form-group">
