@@ -9,8 +9,8 @@ http://tucsondotnet.azurewebsites.net/
 
 * SpecFlow -- a talk on Behavior Driven Development using SpecFlow (June 20015)
 * TBD Graphs and the Neo4j Client (scheduled for April 2016)
-*   http://graphs-demo.azurewebsites.net/demo/neo4j
-*   PowerPoint Presentation Intro to Graphs and Neo4j:  http://1drv.ms/1Tb3xbI
+**   http://graphs-demo.azurewebsites.net/demo/neo4j
+**   PowerPoint Presentation Intro to Graphs and Neo4j:  http://1drv.ms/1Tb3xbI
 
 Python
 
