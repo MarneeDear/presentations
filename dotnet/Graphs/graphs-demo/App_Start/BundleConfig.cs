@@ -27,6 +27,16 @@ namespace graphs_demo
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new StyleBundle("~/alchemy/css").Include(
+                      "~/Content/alchemy/styles/vendor.css",
+                      "~/Content/alchemy/alchemy.min.css"
+                      ));
+
+            bundles.Add(new ScriptBundle("~/alchemy/js").Include(
+                     "~/Scripts/alchemy/vendor.js",
+                     "~/Scripts/alchemy/alchemy.min.js"
+                     ));
         }
     }
 }

@@ -17,7 +17,7 @@
     <AssemblyName>graphs-demo</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
@@ -177,6 +177,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\alchemy\alchemy-white.css" />
+    <Content Include="Content\alchemy\alchemy.css" />
+    <Content Include="Content\alchemy\alchemy.min.css" />
+    <Content Include="Content\alchemy\styles\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\alchemy\styles\images\maze-black.png" />
+    <Content Include="Content\alchemy\styles\vendor.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -185,6 +191,17 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\alchemy\alchemy.js" />
+    <Content Include="Scripts\alchemy\alchemy.min.js" />
+    <Content Include="Scripts\alchemy\vendor.js" />
+    <Content Include="demo\data\actors.json" />
+    <Content Include="demo\data\charlize.json" />
+    <Content Include="demo\data\contrib.json" />
+    <Content Include="Content\alchemy\styles\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\alchemy\styles\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\alchemy\styles\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\alchemy\styles\fonts\FontAwesome.otf" />
+    <Content Include="Content\alchemy\styles\images\.DS_Store" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -193,16 +210,12 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="demo\data\actors.json" />
-    <Content Include="demo\data\charlize.json" />
-    <Content Include="demo\data\contrib.json" />
     <None Include="Properties\PublishProfiles\graphs-demo - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery-2.2.0.min.js" />
-    <Content Include="Scripts\jquery-2.2.0.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -234,9 +247,11 @@
     <Content Include="Views\Demo\SimpleLikes.cshtml" />
     <Content Include="Views\CustodyTransfer\Index.cshtml" />
     <Content Include="Views\IVR\Index.cshtml" />
+    <Content Include="Scripts\jquery-2.2.0.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Neo4JTypeProvider\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -260,7 +275,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>57175</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://graphs-demo</IISUrl>
+          <IISUrl>http://localhost:57175/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

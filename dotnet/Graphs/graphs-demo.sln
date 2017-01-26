@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphs-demo.Tests", "graphs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphs-demo", "graphs-demo\graphs-demo.csproj", "{FDAE55C0-C339-4257-8281-A62F7169BC89}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "neo4jtypeprovider", "neo4jtypeprovider\neo4jtypeprovider\neo4jtypeprovider.fsproj", "{CA7CB6B0-E7A5-4183-B2F7-67D302768ADD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FDAE55C0-C339-4257-8281-A62F7169BC89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDAE55C0-C339-4257-8281-A62F7169BC89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDAE55C0-C339-4257-8281-A62F7169BC89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA7CB6B0-E7A5-4183-B2F7-67D302768ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA7CB6B0-E7A5-4183-B2F7-67D302768ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA7CB6B0-E7A5-4183-B2F7-67D302768ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA7CB6B0-E7A5-4183-B2F7-67D302768ADD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

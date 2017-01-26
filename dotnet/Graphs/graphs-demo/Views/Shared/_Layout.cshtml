@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    <link rel="stylesheet" href="http://cdn.graphalchemist.com/alchemy.min.css" />
 
+    @Styles.Render("~/alchemy/css")
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -31,6 +31,7 @@
     </div>
     <div class="container body-content">
         <div class="row">
+            @Scripts.Render("~/alchemy/js")
             @RenderBody()
         </div>
         <hr />
