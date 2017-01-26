@@ -1,5 +1,0 @@
-C:\Users\Marnee Dearman\Documents\Visual Studio 2012\Projects\SpecflowStarter\SpecflowStarter\Presentation\bin\Debug\Presentation.dll
-C:\Users\Marnee Dearman\Documents\Visual Studio 2012\Projects\SpecflowStarter\SpecflowStarter\Presentation\bin\Debug\Presentation.pdb
-C:\Users\Marnee Dearman\Documents\Visual Studio 2012\Projects\SpecflowStarter\SpecflowStarter\Presentation\obj\Debug\Presentation.csprojResolveAssemblyReference.cache
-C:\Users\Marnee Dearman\Documents\Visual Studio 2012\Projects\SpecflowStarter\SpecflowStarter\Presentation\obj\Debug\Presentation.dll
-C:\Users\Marnee Dearman\Documents\Visual Studio 2012\Projects\SpecflowStarter\SpecflowStarter\Presentation\obj\Debug\Presentation.pdb
