@@ -1,5 +1,5 @@
 # Presentations
-Presentations I have done for Tucson Python and .Net Users Group
+Presentations I have done for Tucson Python, .Net Users Group, and soon to come the Data Science meetup
 
 http://www.meetup.com/Tucson-Python-Meetup/
 
@@ -15,3 +15,7 @@ http://tucsondotnet.azurewebsites.net/
 Python
 
 * Py2neo -- a talk on graphs, graph databases, Neo4j, and the Neo4j python client, Py2neo (Feb 2016)
+
+Data Science Meetup
+
+* TODO
