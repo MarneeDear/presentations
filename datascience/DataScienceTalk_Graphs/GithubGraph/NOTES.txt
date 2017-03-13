@@ -1,0 +1,23 @@
+﻿
+Get members for an organization
+for each member get all organizations to which the user belongs
+Start with FSharpProjects
+https://github.com/fsprojects
+
+Find out what other orgs people have in common
+
+Project Contributions?
+What do they have in common?
+
+Get Members for an organization
+https://api.github.com/orgs/{orgname}
+https://api.github.com/orgs/{orgname}/public_members
+
+Get organizations for a user
+https://api.github.com/users/{username}/orgs
+
+
+TMP=%USERPROFILE%\AppData\Local\Temp
+
+HOW TO WRITE A GRAPH GIST
+https://github.com/neo4j-contrib/graphgist/blob/master/gists/syntax.adoc
