@@ -1,0 +1,68 @@
+
+
+GET all Hams who joined this year
+
+match (h:HAM)-[:JOINED]->(d:Day)--(m:Month)--(y:Year)
+where d.year = 2016
+return h.call_sign, d.day + '.' + d.month + '.' + d.year as date_joined
+
+Get all Hams who joined this year and are members of OVARC
+
+match (o:ORGANIZATION {abbreviation :'OVARC'})<-[:MEMBER_OF]-(h:HAM)-[:JOINED]->(d:Day)--(m:Month)--(y:Year)
+where d.year = 2016
+return h, o, d, m, y
+
+
+Get all Hams who are interested in Field Day who are also members of OVARC
+
+match (i:INTEREST {name:'Field Day'})<-[:INTERESTED_IN]-(h:HAM)-[:MEMBER_OF]->(o:ORGANIZATION {abbreviation:'OVARC'})
+return h, o, i
+
+GET all Hams into Field Day members of OVARC and located in Tucson
+
+match (h:HAM)-[:LOCATED_IN]->(loc:LOCATION {name: 'Tucson'})
+match (i:INTEREST {name:'Field Day'})<-[:INTERESTED_IN]-(h)-[:MEMBER_OF]->(o:ORGANIZATION {abbreviation:'OVARC'})
+return h, o, i, loc
+
+alternative syntax
+match (h:HAM)-[:LOCATED_IN]->(loc:LOCATION {name: 'Tucson'}), (i:INTEREST {name:'Field Day'})<-[:INTERESTED_IN]-(h)-[:MEMBER_OF]->(o:ORGANIZATION {abbreviation:'OVARC'})
+return h, o, i, loc
+
+Get Hams who are members of OVARC and members of ARRL
+
+match (h:HAM)-[:MEMBER_OF]->(ovarc:ORGANIZATION)
+match (h)-[:MEMBER_OF]->(arrl:ORGANIZATION)
+match (ovarc)-[:LOCATED_IN]->(tucson:LOCATION) 
+where ovarc.abbreviation = 'OVARC' and arrl.abbreviation = 'ARRL' and tucson.name = 'Tucson'
+return h, ovarc, arrl, tucson
+
+alternative syntax
+match (h:HAM)-[:MEMBER_OF]->(ovarc:ORGANIZATION), (h)-[:MEMBER_OF]->(arrl:ORGANIZATION) , (ovarc)-[:LOCATED_IN]->(tucson:LOCATION)
+where ovarc.abbreviation = 'OVARC' and arrl.abbreviation = 'ARRL' and tucson.name = 'Tucson'
+return h, ovarc, arrl, tucson
+
+-- because OVARC may not be unique so we want the one in Tucson.  could also use the id, which is unique
+
+Everyone in Tucson who has the same interests as Marnee
+
+MATCH (u:HAM {email:'marnee@elmerly.com'})-[url:LOCATED_IN]->(l:LOCATION)<-[orl:LOCATED_IN]-(o:HAM)
+WITH u, o, l, url, orl
+MATCH (u)-[ru:INTERESTED_IN]->(i:INTEREST)<-[ro:INTERESTED_IN]-(o)
+RETURN u.call_sign, url.type, l.name, orl.type, o.call_sign, i.name
+
+SHORTEST PATH
+
+match (marnee:HAM {call_sign:'KG7SIO'}), (julian:HAM {call_sign:'KG7SIL'}),
+p = shortestPath((marnee)-[*..15]-(julian))
+return p
+
+optional match (newham:HAM {call_sign:'KG7SIO'}), (elmer:HAM {call_sign:'KA7VPR'}),
+p = shortestPath((newham)-[*..4]-(elmer))
+return p
+
+Get all hams that are General license
+
+match (general:HAM)-[:LICENSED]->(L:GENERAL)
+RETURN general
+
+
