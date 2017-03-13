@@ -110,3 +110,4 @@ bld/
 LOGS/*
 
 /packages/*
+*/packages/*
