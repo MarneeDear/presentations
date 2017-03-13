@@ -1,6 +1,8 @@
 
+https://github.com/sqlcook/Sublime-Neo4j
 
 GET all Hams who joined this year
+
 
 match (h:HAM)-[:JOINED]->(d:Day)--(m:Month)--(y:Year)
 where d.year = 2016
