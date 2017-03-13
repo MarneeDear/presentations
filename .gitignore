@@ -112,3 +112,4 @@ LOGS/*
 /packages/*
 */packages/*
 /datascience/DataScienceTalk_Graphs/packages
+/dotnet/Graphs/packages
