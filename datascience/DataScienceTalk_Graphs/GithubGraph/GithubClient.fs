@@ -5,10 +5,10 @@ open FSharp.Data
 open Newtonsoft.Json
 open FSharp.Data.HttpRequestHeaders
 
-let githubOrgURL orgLogin = sprintf "https://api.github.com/orgs/%s" orgLogin
-let githubUserURL userLogin = sprintf "https://api.github.com/users/%s" userLogin
-let githubOrgMembersURL orgLogin = sprintf "https://api.github.com/orgs/%s/members" orgLogin
-let githubUserOrgsURL userLogin = sprintf "https://api.github.com/users/%s/orgs" userLogin
+let githubOrgURL orgLogin = sprintf "https://api.github.com/orgs/%s?per_page=100" orgLogin
+let githubUserURL userLogin = sprintf "https://api.github.com/users/%s?per_page=100" userLogin
+let githubOrgMembersURL orgLogin = sprintf "https://api.github.com/orgs/%s/members?per_page=100" orgLogin
+let githubUserOrgsURL userLogin = sprintf "https://api.github.com/users/%s/orgs?per_page=100" userLogin
 
 type OrgResponse = JsonProvider<"org.json">
 type UserReponse = JsonProvider<"user.json">

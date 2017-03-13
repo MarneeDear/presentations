@@ -13,7 +13,7 @@ let buildOrgGraph orgLogin =
 
 [<EntryPoint>]
 let main argv = 
-    let projects = if argv.Length.Equals 0 then [|"dotnet"|] else argv
+    let projects = if argv.Length.Equals 0 then [|"Microsoft"|] else argv
     printfn "%s" "Why hello there. Let's build a graph."
     Environment.NewLine |> printfn "%s"
     printfn "%s" "O-[R]-> O"
