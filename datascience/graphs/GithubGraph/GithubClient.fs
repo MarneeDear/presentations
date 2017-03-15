@@ -42,6 +42,7 @@ let getOrgRecord orgLogin : BuildGraph.GitHubEntity =
             Id = uint32(response.Id)
             Login = response.Login
             Name = response.Name
+            Location = response.Location
         }
     {
         Label = BuildGraph.GITHUB_ORGANIZATION
@@ -55,6 +56,7 @@ let getUserRecord userLogin : BuildGraph.GitHubEntity =
             Id = uint32(response.Id)
             Login = response.Login
             Name = response.Name
+            Location = response.Location
         }
     {
         Label = BuildGraph.GITHUB_USER

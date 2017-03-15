@@ -18,17 +18,31 @@ let neo4jClient = new GraphClient(new Uri(Neo4JConnectionString))
 type GitHubLabel = 
     | GITHUB_USER
     | GITHUB_ORGANIZATION
+    | GITHUB_LOCATION
 
 type GitHubRelationship =
     | BELONGS_TO //user belongs to an organization
     | FOLLOWS //user follows another user
+    | LOCATED_IN //user is located in this place
+
+
+type GitHubLocationProperties =
+    {
+        Name : string
+    }
+
+//type GitHubLocation =
+//    {
+//        Label : GitHubLabel
+//        Properties : GitHubLocationProperties
+//    }
 
 type GitHubEntityProperties =
     {
         Id : uint32
         Login: string
         Name: string
-
+        Location: string
     }
 
 //The RECORD TYPE below will represent our NODE properties
@@ -51,18 +65,57 @@ let getNodeLabel entityLabel =
     match entityLabel with
     | GITHUB_USER -> "GITHUB_USER"
     | GITHUB_ORGANIZATION -> "GITHUB_ORGANIZATION"
+    | GITHUB_LOCATION -> "GITHUB_LOCATION"
 
 let getRelationshipType rel =
     match rel with
     | BELONGS_TO -> "BELONGS_TO"
     | FOLLOWS -> "FOLLOWS"
+    | LOCATED_IN -> "LOCATED_IN"
+
+let inline (=>) a b = a, box b
+
+let createLocation (location:string) =
+//    let properties = location.Properties
+//    let label = getNodeLabel location.Label
+    
+    let locationNode : GitHubLocationProperties = 
+        {
+            Name = match location with
+                    | "" -> "No Location Given"
+                    | _ -> location
+        }
+    neo4jClient.Connect()
+    neo4jClient.Cypher
+        .Merge(sprintf "(loc:%s {Name: {name} })" (getNodeLabel GITHUB_LOCATION))
+        .OnCreate()
+        .Set("loc = {properties}")
+        .WithParams(dict [
+                        "name" => locationNode.Name
+                        "properties" => locationNode
+                    ])
+        .ExecuteWithoutResults()
+
+let createMemberLocation userLogin location =
+    neo4jClient.Connect()
+
+    let locationNode  = 
+        match location with
+        | "" -> "No Location Given"
+        | _ -> location
+
+    neo4jClient.Cypher
+        .Match(sprintf "(l:%s)" (getNodeLabel GITHUB_LOCATION), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
+        .Where(fun (l:GitHubLocationProperties) -> l.Name = locationNode)
+        .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
+        .CreateUnique(sprintf "(u)-[:%s]->(l)" (getRelationshipType GitHubRelationship.LOCATED_IN))
+        .ExecuteWithoutResults()
 
 
 //MERGE : CREATE or UPDATE a node based on the properties passed in
 let createEntity (entity:GitHubEntity) =
     neo4jClient.Connect()
 
-    let inline (=>) a b = a, box b
     let properties = entity.Properties
     let label = getNodeLabel entity.Label
 
@@ -77,7 +130,7 @@ let createEntity (entity:GitHubEntity) =
                         "properties" => properties
                     ])
         .ExecuteWithoutResults()
-    entity.Properties.Login
+//    entity.Properties.Login
 
 
 //CREATE A LINK BETWEEN AN ORG AND A USER
