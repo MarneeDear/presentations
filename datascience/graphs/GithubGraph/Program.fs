@@ -19,11 +19,31 @@ let ``process each page of the members`` orgLogin page =
     ``get the organization members list`` orgLogin page
     |> Seq.iter (fun user -> ``create the organization member and location graph`` user orgLogin)
 
-let ``feed the graph`` orgLogin = 
-    let pagesList = GithubClient.pageNumbersList orgLogin
+let ``feed the org graph`` orgLogin = 
+    let pagesList = GithubClient.getRequestPageNumbersList (GithubClient.githubOrgMembersURL orgLogin 4908)
+    // GithubClient.orgMembersPageNumbersList orgLogin
     ``create the organization`` orgLogin
     //pagesList |> List.iter
     pagesList |> List.iter (``process each page of the members`` orgLogin)
+
+let ``create the user`` userLogin =
+    BuildGraph.createEntity (GithubClient.getUserRecord userLogin)
+
+let ``get the starred projects list`` userLogin page =
+    GithubClient.getUserStarred userLogin page
+
+let ``create the starred project graph`` project userLogin =
+    BuildGraph.createEntity project
+    BuildGraph.createStarred project.Properties.Id userLogin
+
+let ``process each page of the starred projects`` userLogin page =
+    ``get the starred projects list`` userLogin page
+    |> Seq.iter (fun project -> ``create the starred project graph`` project userLogin)
+
+let ``feed the starred graph`` userLogin =
+    let pagesList = GithubClient.getRequestPageNumbersList (GithubClient.githubUserStarredURL userLogin 4908) 
+    ``create the user`` userLogin
+    pagesList |> List.iter (``process each page of the starred projects`` userLogin)
 
 //    ``get the organization members list`` orgLogin 1
 //    |> Seq.iter (fun user -> ``create the organization member and location graph`` user orgLogin)
@@ -36,17 +56,9 @@ let ``feed the graph`` orgLogin =
 //                    BuildGraph.createOrganizationMembership user.Properties.Login orgLogin
 //                    )
 
-
-[<EntryPoint>]
-let main argv = 
-    let projects = if argv.Length.Equals 0 then [|"fsprojects"|] else argv
-    printfn "%s" "*************************************"
-    printfn "%s" "Why hello there. Let's build a graph."
-//    Environment.NewLine |> printfn "%s"
-    printfn "%s" "O-[R]->O"
-    projects |> Array.iter (printfn "%s")
-    Environment.NewLine |> printfn "%s"
-    printfn "%s" "*************************************"
+let doOrgMembers organizations = 
+    printfn "These are the organizations for which I will build a members graph:"
+    organizations |> Seq.iter (printfn "%s")
 //    printfn "%s %s" "I am going to look for these Github Organizations for you." Environment.NewLine
 //    projects |> Array.iter (printfn "%s")
 //    projects |> Array.item 0 |> (printfn "Trying %s%s" Environment.NewLine)
@@ -57,8 +69,51 @@ let main argv =
 //    Environment.NewLine |> printfn "%s"
 //    projects |> Array.item 0 |> GithubClient.getOrgRecord |> printfn "RECORD %A"
 //    Environment.NewLine |> printfn "%s"
-    printfn "%s" "Please wait while I build the graph. This is going to be awesome."
-    projects |> Array.iter ``feed the graph`` //builds members and their locations
+    organizations |> Seq.iter ``feed the org graph`` //builds members and their locations
+
+let doStarred userLogins =
+    printfn "These are the users for which I will build a starred projects graph:"
+    userLogins |> Seq.iter (printfn "%s")
+    userLogins |> Seq.iter ``feed the starred graph``
+
+[<EntryPoint>]
+let main argv = 
+
+    let arguments = 
+        if argv.Length.Equals 0 then 
+            [|"--starred"; "MarneeDear"|]
+        else
+            argv
+
+    printfn "%s" "*************************************"
+    printfn "%s" "Why hello there. Let's build a graph."
+//    Environment.NewLine |> printfn "%s"
+    printfn "%s" "O-[R]->O"
+    Environment.NewLine |> printfn "%s"
+    printfn "%s" "*************************************"
+    printfn "%s" "Please wait while I build the graph. Did I tell you that graphs are everywhere?"
+    
+    //TODO get the organization projects
+    match arguments.[0] with
+    | "--organization" -> doOrgMembers (arguments |> Array.toSeq |> Seq.tail)
+    | "--starred" -> doStarred (arguments |> Array.toSeq |> Seq.tail)    
+    | _ -> failwith "Please provide a command."
+
+////    projects |> Array.iter (printfn "%s")
+////    Environment.NewLine |> printfn "%s"
+////    printfn "%s" "*************************************"
+//////    printfn "%s %s" "I am going to look for these Github Organizations for you." Environment.NewLine
+//////    projects |> Array.iter (printfn "%s")
+//////    projects |> Array.item 0 |> (printfn "Trying %s%s" Environment.NewLine)
+//////    projects |> Array.item 0 |> GithubClient.githubOrgURL |> printfn "%s"
+//////    Environment.NewLine |> printfn "%s"
+//////    printfn "%s" GithubClient.test
+//////    printfn "Organization JSON Response: %s %s" Environment.NewLine (projects |> Array.item 0 |> GithubClient.getGithubOrganization)
+//////    Environment.NewLine |> printfn "%s"
+//////    projects |> Array.item 0 |> GithubClient.getOrgRecord |> printfn "RECORD %A"
+//////    Environment.NewLine |> printfn "%s"
+////    printfn "%s" "Please wait while I build the graph. This is going to be awesome."
+////    projects |> Array.iter ``feed the graph`` //builds members and their locations
     //TODO build locations graph
     //TODO do some analysis
     Environment.NewLine |> printfn "%s"

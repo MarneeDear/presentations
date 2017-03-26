@@ -19,12 +19,13 @@ type GitHubLabel =
     | GITHUB_USER
     | GITHUB_ORGANIZATION
     | GITHUB_LOCATION
+    | GITHUB_PROJECT
 
 type GitHubRelationship =
     | BELONGS_TO //user belongs to an organization
     | FOLLOWS //user follows another user
     | LOCATED_IN //user is located in this place
-
+    | STARRED
 
 type GitHubLocationProperties =
     {
@@ -54,7 +55,6 @@ type GitHubEntity =
         Properties : GitHubEntityProperties
     }
 
-
 //type GitHubMembership =
 //    {
 //        Path : GitHubEntity * GitHubRelationship * GitHubEntity
@@ -66,12 +66,14 @@ let getNodeLabel entityLabel =
     | GITHUB_USER -> "GITHUB_USER"
     | GITHUB_ORGANIZATION -> "GITHUB_ORGANIZATION"
     | GITHUB_LOCATION -> "GITHUB_LOCATION"
+    | GITHUB_PROJECT -> "GITHUB_PROJECT"
 
 let getRelationshipType rel =
     match rel with
     | BELONGS_TO -> "BELONGS_TO"
     | FOLLOWS -> "FOLLOWS"
     | LOCATED_IN -> "LOCATED_IN"
+    | STARRED -> "STARRED"
 
 let inline (=>) a b = a, box b
 
@@ -108,7 +110,7 @@ let createMemberLocation userLogin location =
         .Match(sprintf "(l:%s)" (getNodeLabel GITHUB_LOCATION), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
         .Where(fun (l:GitHubLocationProperties) -> l.Name = locationNode)
         .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
-        .CreateUnique(sprintf "(u)-[:%s]->(l)" (getRelationshipType GitHubRelationship.LOCATED_IN))
+        .CreateUnique(sprintf "(u)-[:%s]->(l)" (getRelationshipType LOCATED_IN))
         .ExecuteWithoutResults()
 
 
@@ -130,8 +132,6 @@ let createEntity (entity:GitHubEntity) =
                         "properties" => properties
                     ])
         .ExecuteWithoutResults()
-//    entity.Properties.Login
-
 
 //CREATE A LINK BETWEEN AN ORG AND A USER
 let createOrganizationMembership userLogin orgLogin =
@@ -151,9 +151,18 @@ let createOrganizationMembership userLogin orgLogin =
         .Match(sprintf "(o:%s)" (getNodeLabel GITHUB_ORGANIZATION), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
         .Where(fun (o:GitHubEntityProperties) -> o.Login = orgLogin)
         .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
-        .CreateUnique(sprintf "(u)-[:%s]->(o)" (getRelationshipType GitHubRelationship.BELONGS_TO))
+        .CreateUnique(sprintf "(u)-[:%s]->(o)" (getRelationshipType BELONGS_TO))
         .ExecuteWithoutResults()
-//    userLogin, orgLogin
+
+let createStarred projectId userLogin =
+    neo4jClient.Connect()
+
+    neo4jClient.Cypher
+        .Match(sprintf "(p:%s)" (getNodeLabel GITHUB_PROJECT), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
+        .Where(fun (p:GitHubEntityProperties) -> p.Id = projectId)
+        .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
+        .CreateUnique(sprintf "(u)-[:%s]->(p)" (getRelationshipType STARRED))
+        .ExecuteWithoutResults()
 
 //DELETE AN ENTITY AND ALL OF ITS RELATIONSHIPS
 let deleteNode (entity:GitHubEntity) =

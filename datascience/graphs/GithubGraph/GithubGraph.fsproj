@@ -68,6 +68,7 @@
     <None Include="user.json" />
     <None Include="userorgs.json" />
     <None Include="orgmembers.json" />
+    <None Include="starredlist.json" />
     <Content Include="ConfigSource.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
