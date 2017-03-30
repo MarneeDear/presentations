@@ -18,10 +18,10 @@ let neo4jClient = new GraphClient(Neo4JConnectionString) //Uri(Neo4JConnectionSt
 //This discriminated union will represent the LABELS we have in the graph
 
 type GitHubLabel = 
-    | GITHUB_USER
-    | GITHUB_ORGANIZATION
-    | GITHUB_LOCATION
-    | GITHUB_PROJECT
+    | USER
+    | ORGANIZATION
+    | LOCATION
+    | PROJECT
 
 type GitHubRelationship =
     | BELONGS_TO //user belongs to an organization
@@ -65,10 +65,10 @@ type GitHubEntity =
 
 let getNodeLabel entityLabel =
     match entityLabel with
-    | GITHUB_USER -> "GITHUB_USER"
-    | GITHUB_ORGANIZATION -> "GITHUB_ORGANIZATION"
-    | GITHUB_LOCATION -> "GITHUB_LOCATION"
-    | GITHUB_PROJECT -> "GITHUB_PROJECT"
+    | USER -> "USER"
+    | ORGANIZATION -> "ORGANIZATION"
+    | LOCATION -> "LOCATION"
+    | PROJECT -> "PROJECT"
 
 let getRelationshipType rel =
     match rel with
@@ -91,7 +91,7 @@ let createLocation (location:string) =
         }
     neo4jClient.Connect()
     neo4jClient.Cypher
-        .Merge(sprintf "(loc:%s {Name: {name} })" (getNodeLabel GITHUB_LOCATION))
+        .Merge(sprintf "(loc:%s {Name: {name} })" (getNodeLabel LOCATION))
         .OnCreate()
         .Set("loc = {properties}")
         .WithParams(dict [
@@ -109,7 +109,7 @@ let createMemberLocation userLogin location =
         | _ -> location
 
     neo4jClient.Cypher
-        .Match(sprintf "(l:%s)" (getNodeLabel GITHUB_LOCATION), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
+        .Match(sprintf "(l:%s)" (getNodeLabel LOCATION), sprintf "(u:%s)" (getNodeLabel USER))
         .Where(fun (l:GitHubLocationProperties) -> l.Name = locationNode)
         .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
         .CreateUnique(sprintf "(u)-[:%s]->(l)" (getRelationshipType LOCATED_IN))
@@ -150,7 +150,7 @@ let createOrganizationMembership userLogin orgLogin =
     neo4jClient.Connect()
 
     neo4jClient.Cypher
-        .Match(sprintf "(o:%s)" (getNodeLabel GITHUB_ORGANIZATION), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
+        .Match(sprintf "(o:%s)" (getNodeLabel ORGANIZATION), sprintf "(u:%s)" (getNodeLabel USER))
         .Where(fun (o:GitHubEntityProperties) -> o.Login = orgLogin)
         .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
         .CreateUnique(sprintf "(u)-[:%s]->(o)" (getRelationshipType BELONGS_TO))
@@ -160,7 +160,7 @@ let createStarred projectId userLogin =
     neo4jClient.Connect()
 
     neo4jClient.Cypher
-        .Match(sprintf "(p:%s)" (getNodeLabel GITHUB_PROJECT), sprintf "(u:%s)" (getNodeLabel GITHUB_USER))
+        .Match(sprintf "(p:%s)" (getNodeLabel PROJECT), sprintf "(u:%s)" (getNodeLabel USER))
         .Where(fun (p:GitHubEntityProperties) -> p.Id = projectId)
         .AndWhere(fun (u:GitHubEntityProperties) -> u.Login = userLogin)
         .CreateUnique(sprintf "(u)-[:%s]->(p)" (getRelationshipType STARRED))
