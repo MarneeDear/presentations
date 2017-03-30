@@ -13,12 +13,14 @@ let githubUserURL userLogin = sprintf "https://api.github.com/users/%s?per_page=
 let githubOrgMembersURL orgLogin page = sprintf "https://api.github.com/orgs/%s/members?per_page=100&page=%i" orgLogin page 
 let githubUserOrgsURL userLogin page = sprintf "https://api.github.com/users/%s/orgs?per_page=100&page=%i" userLogin page
 let githubUserStarredURL userLogin page = sprintf "https://api.github.com/users/%s/starred?per_page=100&page=%i" userLogin page
+let githubOrgReposURL orgLogin page = sprintf "https://api.github.com/orgs/%s/repos?per_page=100&page=%i" orgLogin page
 
 type OrgResponse = JsonProvider<"org.json">
 type UserReponse = JsonProvider<"user.json">
 type OrgMembersReponse = JsonProvider<"orgmembers.json">
 type UserOrgsResponse = JsonProvider<"userorgs.json">
-type StarredProjects = JsonProvider<"starredlist.json">
+type StarredProjectsResponse = JsonProvider<"starredlist.json">
+type OrgReposResponse = JsonProvider<"orgrepos.json">
 
 let getGithubData url =
     Http.RequestString(url = url, httpMethod = HttpMethod.Get, 
@@ -45,6 +47,9 @@ let getGithubOrgMembers orgLogin page =
 let getGithubUserOrgs userLogin page = 
     getGithubData (githubUserOrgsURL userLogin page)
 
+let getGithubOrgRepos orgLogin page =
+    getGithubData (githubOrgReposURL orgLogin page)
+
 let rando = Random().Next(100, 10000).ToString()
 
 let getRequestPageNumbersList url =
@@ -67,10 +72,10 @@ let getRequestPageNumbersList url =
 
 
 let getUserStarred userLogin page : BuildGraph.GitHubEntity seq = 
-    let response = (getGithubStarred userLogin page) |> StarredProjects.Parse
+    let response = (getGithubStarred userLogin page) |> StarredProjectsResponse.Parse
     response 
     |> Seq.map  (fun resp -> {
-                                Label = BuildGraph.GITHUB_PROJECT
+                                Label = BuildGraph.PROJECT
                                 Properties = {
                                                 Id = uint32(resp.Id)
                                                 Login = resp.Owner.Login
@@ -90,7 +95,7 @@ let getOrgRecord orgLogin : BuildGraph.GitHubEntity =
             Location = response.Location
         }
     {
-        Label = BuildGraph.GITHUB_ORGANIZATION
+        Label = BuildGraph.ORGANIZATION
         Properties = properties
     }
 
@@ -104,13 +109,69 @@ let getUserRecord userLogin : BuildGraph.GitHubEntity =
             Location = response.Location
         }
     {
-        Label = BuildGraph.GITHUB_USER
+        Label = BuildGraph.USER
         Properties = properties
     }
 
 let getOrgMembersList orgLogin page : BuildGraph.GitHubEntity seq = 
     let response = (getGithubOrgMembers orgLogin page) |> OrgMembersReponse.Parse
     response |> Seq.map (fun u -> getUserRecord u.Login) //|> Seq.map getUserRecord
+
+let getOrgProjectsList orgLogin : BuildGraph.GitHubEntity seq =
+    let pages = getRequestPageNumbersList (githubOrgReposURL orgLogin 4908)
+    let response page = (getGithubOrgRepos orgLogin page) |> OrgReposResponse.Parse
+    response 1
+    |> Seq.map (fun resp -> {
+                                Label = BuildGraph.PROJECT
+                                Properties = {
+                                                Id = uint32(resp.Id)
+                                                Login = resp.Owner.Login
+                                                Name = resp.Name
+                                                Location = String.Empty
+                                            }
+                            }
+                )
+
+
+//    
+//    let entityconvert response : BuildGraph.GitHubEntity seq =
+//        response |> Seq.map (fun g -> g) |> Seq.map (fun repo -> {
+//                                            Label = BuildGraph.PROJECT
+//                                            Properties = {
+//                                                            Id = uint32(repo.Id)
+//                                                            Login = repo.Owner.Login
+//                                                            Name = repo.Name
+//                                                            Location = String.Empty
+//                                            }
+//                                            })
+//    
+//    let test =
+//    pages 
+//    |> Seq.map response 
+//    |> Seq.map entityconvert
+        //|> Seq.map (fun repos -> repos)
+        //|> Seq.map (fun repo -> repo)
+        //{
+//                                    Label = BuildGraph.PROJECT
+//                                    Properties = {
+//                                                    Id = uint32(repo.Id)
+//                                                    Login = repo.Owner.Login
+//                                                    Name = repo.Name
+//                                                    Location = String.Empty
+//                                    }
+//                                })
+
+
+//                )
+    //{ 
+//                                        Label = BuildGraph.PROJECT
+//                                        Properties = {
+//                                                        Id = uint32(repo.Id)
+//                                                        Login = repo.Owner.Login
+//                                                        Name = repo.Name
+//                                                        Location = String.Empty
+//                                        }
+//                                    })
 
 //let getUserOrgs
 //60ab7b0a6bcc5912ebd2663588325a43785bbe86

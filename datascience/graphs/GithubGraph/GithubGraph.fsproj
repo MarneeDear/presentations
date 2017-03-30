@@ -72,6 +72,7 @@
     <Content Include="ConfigSource.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="orgrepos.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Configuration">
