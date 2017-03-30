@@ -2,13 +2,15 @@
 
 open System
 open Neo4jClient
+open FSharp.Configuration
+
 //open Neo4jClient.Cypher
 //open FSharp.Configuration
 
+type Settings = AppSettings<"App.config">
 
-[<Literal>]
-let Neo4JConnectionString =  @"http://localhost:7474/db/data"
-let neo4jClient = new GraphClient(new Uri(Neo4JConnectionString))
+let Neo4JConnectionString = Settings.Neo4jConnection //  @"http://localhost:7474/db/data"
+let neo4jClient = new GraphClient(Neo4JConnectionString) //Uri(Neo4JConnectionString))
 
 //Let's define the domain with types
 //This is an oversimplification but helpful for processing the results we get from the Github API
