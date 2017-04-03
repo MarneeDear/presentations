@@ -1,0 +1,8 @@
+# PYTHON 3
+print("hello world!")
+# call the print function passing "hello world!" as the argument
+
+# COCONUT 
+"hello world!" |> print
+# pipe the value "hello world!" into the print function
+

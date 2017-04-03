@@ -1,0 +1,17 @@
+def factorial(n):
+    """Compute n! where n is an integer >= 0."""
+    if n `isinstance` int and n >= 0:
+        acc = 1
+        for x in range(1, n+1):
+            acc *= x
+        return acc
+    else:
+        raise TypeError("the argument to factorial must be an integer >= 0")
+
+# Test cases:
+#
+# -1 |> factorial |> print  # TypeError
+# 0.5 |> factorial |> print  # TypeError
+# 0 |> factorial |> print  # 1
+# 3 |> factorial |> print  # 6
+#
