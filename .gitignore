@@ -117,3 +117,4 @@ LOGS/*
 /dotnet/Graphs/packages
 packages
 /python/venv/*
+/python/coconut/venv/*
