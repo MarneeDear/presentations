@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0x7361be04
+# __coconut_hash__ = 0x909d1ffa
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -575,5 +575,7 @@ fog = _coconut_compose(f, g)
 
 
 # PARALLEL PROGRAMMING
+# JULIAN EXPLAINS THIS WITH AN AWESOME EXAMPLE
 
 # ALGEBRAIC DATA TYPES
+# I dont understand how these work in Coconut

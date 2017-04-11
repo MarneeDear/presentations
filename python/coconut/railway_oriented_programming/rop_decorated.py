@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xb1d0cb2f
+# __coconut_hash__ = 0x4df90101
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -459,7 +459,7 @@ from collections import namedtuple
 
 ErrorResult = namedtuple("ErrorResult", "Message")
 
-test = ErrorResult(Message="THIS IS A TEST")
+test = ErrorResult(Message="Something is not right. This could be a message or an exception object.")
 
 def checkResult(*_coconut_match_to_args, **_coconut_match_to_kwargs):
     _coconut_match_check = False
@@ -506,16 +506,39 @@ def calc_error(result):
 
 # calc_1(test) |> print
 # calc_2(test) |> print
-
 # calc_error(1) |> print
 
 #NOW we can build a pipeline and short circuit any processing if an error occured
 
-#this chouls produce the error result
+#this should produce the error result. calc_2 should be skipped
+(print)("CALC WITH ERROR")
 (print)((calc_2)((calc_error)((calc_1)(1))))
 # pipe 1 into calc_1
 # calc_error will result in an ErrorResult
 # calc_2 will not do any calculation, but will return the ErrorResult from the previous calculation
 # print
 
+# this is what happens where there is no error
+# we get the final result of all of the calculations
+(print)("CALC WITHOUT ERROR")
 (print)((calc_2)((calc_2)((calc_1)(1))))
+
+# This is a simple example but you can use exception handlilng to return an ErrorResult tuple in each function
+# Like this
+
+@addpattern(checkResult)
+@_coconut_tco
+def calc_with_exception(result):
+    try:
+        (print)("TRYING TO CALCULATE A STRING?")
+        something = result * 300
+        return something  # result * 300
+    except Exception as e:
+        (print)("SOMETHING HAPPENED")
+        raise _coconut_tail_call(ErrorResult, Message="SOMETING WENT WRONG")
+
+(print)("OUTPUT WITHOUT EXCEPTION")
+(print)((calc_2)((calc_1)((calc_with_exception)(100))))
+
+(print)("OUTPUT WITH EXCEPTION")
+(print)((calc_with_exception)("100"))  # |> calc_1 |> calc_2 |> print

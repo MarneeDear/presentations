@@ -2,7 +2,7 @@ from collections import namedtuple
 
 ErrorResult = namedtuple("ErrorResult", "Message")
 
-test = ErrorResult(Message = "THIS IS A TEST")
+test = ErrorResult(Message = "Somethig went wrong. This could be a message or a an exception object.")
 
 def calc_1(result):
     if isinstance(result, ErrorResult):
@@ -10,7 +10,7 @@ def calc_1(result):
         return result
     else:
         # do something with the result
-        print ("calculating calc_1")
+        print ("calculating calc_1")        
         return result * 100
 
 def calc_2(result):
