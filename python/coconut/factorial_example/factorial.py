@@ -455,7 +455,7 @@ _coconut_MatchError, _coconut_count, _coconut_enumerate, _coconut_reversed, _coc
 
 # Compiled Coconut: ------------------------------------------------------
 
-def factorial(n):
+def factorial_imperative(n):
     """Compute n! where n is an integer >= 0."""
     if (isinstance)(n, int) and n >= 0:
         acc = 1
@@ -465,10 +465,99 @@ def factorial(n):
     else:
         raise TypeError("the argument to factorial must be an integer >= 0")
 
+def factorial_recursive(n):
+    """Compute n! where n is an integer >= 0."""
+    _coconut_match_check = False
+    _coconut_match_to = n
+    if (_coconut_match_to == 0):
+        _coconut_match_check = True
+    if _coconut_match_check:
+        return 1
+    if not _coconut_match_check:
+        _coconut_match_to = n
+        if (_coconut.isinstance(_coconut_match_to, int)):
+            _coconut_match_check = True
+        if _coconut_match_check and not (n > 0):
+            _coconut_match_check = False
+        if _coconut_match_check:
+            return n * factorial_recursive(n - 1)
+    if not _coconut_match_check:
+        raise TypeError("the argument to factorial must be an integer >= 0")
+
+@_coconut_tco
+def factorial_iterative(n):
+    """Compute n! where n is an integer >= 0."""
+    _coconut_match_check = False
+    _coconut_match_to = n
+    if (_coconut_match_to == 0):
+        _coconut_match_check = True
+    if _coconut_match_check:
+        return 1
+    if not _coconut_match_check:
+        _coconut_match_to = n
+        if (_coconut.isinstance(_coconut_match_to, int)):
+            _coconut_match_check = True
+        if _coconut_match_check and not (n > 0):
+            _coconut_match_check = False
+        if _coconut_match_check:
+            raise _coconut_tail_call(reduce, _coconut.operator.mul, range(1, n + 1))
+    if not _coconut_match_check:
+        raise TypeError("the argument to factorial must be an integer >= 0")
+
+def factorial_addpattern(*_coconut_match_to_args, **_coconut_match_to_kwargs):
+    _coconut_match_check = False
+    if (_coconut.len(_coconut_match_to_args) == 1) and (_coconut_match_to_args[0] == 0):
+        if (not _coconut_match_to_kwargs):
+            _coconut_match_check = True
+    if not _coconut_match_check:
+        _coconut_match_err = _coconut_MatchError("pattern-matching failed for " "'def factorial_addpattern(0) = 1'" " in " + _coconut.repr(_coconut.repr(_coconut_match_to_args)))
+        _coconut_match_err.pattern = 'def factorial_addpattern(0) = 1'
+        _coconut_match_err.value = _coconut_match_to_args
+        raise _coconut_match_err
+
+    return 1
+@addpattern(factorial_addpattern)
+@_coconut_tco
+def factorial_addpattern(*_coconut_match_to_args, **_coconut_match_to_kwargs):
+    _coconut_match_check = False
+    if (_coconut.len(_coconut_match_to_args) <= 1) and (_coconut.sum((_coconut.len(_coconut_match_to_args) > 0, "n" in _coconut_match_to_kwargs)) == 1):
+        _coconut_match_temp_0 = _coconut_match_to_args[0] if _coconut.len(_coconut_match_to_args) > 0 else _coconut_match_to_kwargs.pop("n")
+        if (_coconut.isinstance(_coconut_match_temp_0, int)) and (not _coconut_match_to_kwargs):
+            n = _coconut_match_temp_0
+            _coconut_match_check = True
+    if _coconut_match_check and not (n > 0):
+        _coconut_match_check = False
+    if not _coconut_match_check:
+        _coconut_match_err = _coconut_MatchError("pattern-matching failed for " "'def factorial_addpattern(n is int if n > 0) ='" " in " + _coconut.repr(_coconut.repr(_coconut_match_to_args)))
+        _coconut_match_err.pattern = 'def factorial_addpattern(n is int if n > 0) ='
+        _coconut_match_err.value = _coconut_match_to_args
+        raise _coconut_match_err
+
+    """Compute n! where n is an integer >= 0."""
+    raise _coconut_tail_call(reduce, _coconut.operator.mul, range(1, n + 1))
+
+# Test cases:
+# -1 |> factorial_addpattern |> print  # MatchError
+# 0.5 |> factorial_addpattern |> print  # MatchError
+# 0 |> factorial_addpattern |> print  # 1
+(print)(*(factorial_addpattern)(3))
+
+# Test cases:
+# -1 |> factorial_iterative |> print  # TypeError
+# 0.5 |> factorial_iterative |> print  # TypeError
+# 0 |> factorial_iterative |> print  # 1
+(print)((factorial_iterative)(3))  # 6
+
+# Test cases:
+# -1 |> factorial_imperative |> print  # TypeError
+# 0.5 |> factorial_imperative |> print  # TypeError
+# 0 |> factorial_imperative |> print  # 1
+# 3 |> factorial_imperative |> print  # 6
+
 # Test cases:
 #
-# -1 |> factorial |> print  # TypeError
-# 0.5 |> factorial |> print  # TypeError
-# 0 |> factorial |> print  # 1
-# 3 |> factorial |> print  # 6
+# -1 |> factorial_recursive |> print  # TypeError
+# 0.5 |> factorial_recursive |> print  # TypeError
+# 0 |> factorial_recursive |> print  # 1
+(print)((factorial_recursive)(3))  # 6
 #
