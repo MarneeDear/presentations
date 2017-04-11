@@ -1,3 +1,7 @@
+These are some sample code file for my presentation to the Tucson Python Meetup on 4/11/2017
+
+****
+
 You are probably already doing some Functional Programming and don't even know it. 
 
 We write (class-free) functions in Python, we pass around functions like objects, we use map, filter, and zip, we use lambdas, and we might even be using functools and itertools. 
