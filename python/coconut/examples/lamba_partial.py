@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xba9353a8
+# __coconut_hash__ = 0xd4811963
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -455,20 +455,14 @@ _coconut_MatchError, _coconut_count, _coconut_enumerate, _coconut_reversed, _coc
 
 # Compiled Coconut: ------------------------------------------------------
 
-def factorial(n):
-    """Compute n! where n is an integer >= 0."""
-    if (isinstance)(n, int) and n >= 0:
-        acc = 1
-        for x in range(1, n + 1):
-            acc *= x
-        return acc
-    else:
-        raise TypeError("the argument to factorial must be an integer >= 0")
+# LAMBDAS
+dubsums = map(lambda x, y: 2 * (x + y), range(0, 10), range(10, 20))
+# the map function is a function of x and y ( 2 times x plus y)
+# the vlaues of x are 0 to 10
+# the values of y are 10 to 20
+(print)("OUTPUT OF LAMBDA")
+(print)((list)(dubsums))
 
-# Test cases:
-#
-# -1 |> factorial |> print  # TypeError
-# 0.5 |> factorial |> print  # TypeError
-# 0 |> factorial |> print  # 1
-# 3 |> factorial |> print  # 6
-#
+partialsums = (_coconut.functools.partial(map, lambda x, y: 2 * (x + y)))(*(range(0, 10), range(10, 20)))
+(print)("OUTPUT OF PARTIAL LAMBA")
+(print)((list)(partialsums))

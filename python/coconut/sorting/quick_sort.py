@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xba9353a8
+# __coconut_hash__ = 0xe5b59435
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -455,20 +455,39 @@ _coconut_MatchError, _coconut_count, _coconut_enumerate, _coconut_reversed, _coc
 
 # Compiled Coconut: ------------------------------------------------------
 
-def factorial(n):
-    """Compute n! where n is an integer >= 0."""
-    if (isinstance)(n, int) and n >= 0:
-        acc = 1
-        for x in range(1, n + 1):
-            acc *= x
-        return acc
-    else:
-        raise TypeError("the argument to factorial must be an integer >= 0")
+def quick_sort(*_coconut_match_to_args, **_coconut_match_to_kwargs):
+    _coconut_match_check = False
+    if (_coconut.len(_coconut_match_to_args) == 1) and (_coconut.isinstance(_coconut_match_to_args[0], _coconut.abc.Sequence)) and (_coconut.len(_coconut_match_to_args[0]) == 0):
+        if (not _coconut_match_to_kwargs):
+            _coconut_match_check = True
+    if not _coconut_match_check:
+        _coconut_match_err = _coconut_MatchError("pattern-matching failed for " "'def quick_sort([]) = []'" " in " + _coconut.repr(_coconut.repr(_coconut_match_to_args)))
+        _coconut_match_err.pattern = 'def quick_sort([]) = []'
+        _coconut_match_err.value = _coconut_match_to_args
+        raise _coconut_match_err
+
+    return []
+
+@addpattern(quick_sort)
+def quick_sort(*_coconut_match_to_args, **_coconut_match_to_kwargs):
+    _coconut_match_check = False
+    if (_coconut.len(_coconut_match_to_args) == 1) and (_coconut.isinstance(_coconut_match_to_args[0], _coconut.abc.Sequence)) and (_coconut.len(_coconut_match_to_args[0]) >= 1):
+        tail = _coconut.list(_coconut_match_to_args[0][1:])
+        head = _coconut_match_to_args[0][0]
+        if (not _coconut_match_to_kwargs):
+            _coconut_match_check = True
+    if not _coconut_match_check:
+        _coconut_match_err = _coconut_MatchError("pattern-matching failed for " "'def quick_sort([head] + tail) ='" " in " + _coconut.repr(_coconut.repr(_coconut_match_to_args)))
+        _coconut_match_err.pattern = 'def quick_sort([head] + tail) ='
+        _coconut_match_err.value = _coconut_match_to_args
+        raise _coconut_match_err
+
+    """Sort the input sequence using the quick sort algorithm."""
+    return (quick_sort([x for x in tail if x < head]) + [head] + quick_sort([x for x in tail if x >= head]))
 
 # Test cases:
-#
-# -1 |> factorial |> print  # TypeError
-# 0.5 |> factorial |> print  # TypeError
-# 0 |> factorial |> print  # 1
-# 3 |> factorial |> print  # 6
-#
+(print)((quick_sort)([]))  # []
+(print)((quick_sort)([3]))  # [3]
+(print)((quick_sort)([0, 1, 2, 3, 4]))  # [0,1,2,3,4]
+(print)((quick_sort)([4, 3, 2, 1, 0]))  # [0,1,2,3,4]
+(print)((quick_sort)([3, 0, 4, 2, 1]))  # [0,1,2,3,4]

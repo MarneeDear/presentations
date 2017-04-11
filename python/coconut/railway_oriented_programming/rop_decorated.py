@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xba9353a8
+# __coconut_hash__ = 0xb1d0cb2f
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -455,20 +455,67 @@ _coconut_MatchError, _coconut_count, _coconut_enumerate, _coconut_reversed, _coc
 
 # Compiled Coconut: ------------------------------------------------------
 
-def factorial(n):
-    """Compute n! where n is an integer >= 0."""
-    if (isinstance)(n, int) and n >= 0:
-        acc = 1
-        for x in range(1, n + 1):
-            acc *= x
-        return acc
-    else:
-        raise TypeError("the argument to factorial must be an integer >= 0")
+from collections import namedtuple
 
-# Test cases:
-#
-# -1 |> factorial |> print  # TypeError
-# 0.5 |> factorial |> print  # TypeError
-# 0 |> factorial |> print  # 1
-# 3 |> factorial |> print  # 6
-#
+ErrorResult = namedtuple("ErrorResult", "Message")
+
+test = ErrorResult(Message="THIS IS A TEST")
+
+def checkResult(*_coconut_match_to_args, **_coconut_match_to_kwargs):
+    _coconut_match_check = False
+    if (_coconut.len(_coconut_match_to_args) <= 1) and (_coconut.sum((_coconut.len(_coconut_match_to_args) > 0, "result" in _coconut_match_to_kwargs)) == 1):
+        _coconut_match_temp_0 = _coconut_match_to_args[0] if _coconut.len(_coconut_match_to_args) > 0 else _coconut_match_to_kwargs.pop("result")
+        if (not _coconut_match_to_kwargs):
+            result = _coconut_match_temp_0
+            _coconut_match_check = True
+    if _coconut_match_check and not (isinstance(result, ErrorResult)):
+        _coconut_match_check = False
+    if not _coconut_match_check:
+        _coconut_match_err = _coconut_MatchError("pattern-matching failed for " "'match def checkResult(result, if isinstance(result, ErrorResult)) = result'" " in " + _coconut.repr(_coconut.repr(_coconut_match_to_args)))
+        _coconut_match_err.pattern = 'match def checkResult(result, if isinstance(result, ErrorResult)) = result'
+        _coconut_match_err.value = _coconut_match_to_args
+        raise _coconut_match_err
+
+    return result
+
+@addpattern(checkResult)
+def calc_1(result):
+# if isinstance(result, ErrorResult):
+#     print ("error calc_1")
+#     return result
+# else:
+# do something with the result
+    print("calculating calc_1")
+    return result * 100
+
+@addpattern(checkResult)
+def calc_2(result):
+# if isinstance(result, ErrorResult):
+#     print ("error calc_2")
+#     return result
+# else:
+# do something with the result
+    print("calculating calc_2")
+    return result * 200
+
+@addpattern(checkResult)
+def calc_error(result):
+# FORCE AN ERROR FOR THIS EXAMPLE
+    print("returning an error")
+    return test
+
+# calc_1(test) |> print
+# calc_2(test) |> print
+
+# calc_error(1) |> print
+
+#NOW we can build a pipeline and short circuit any processing if an error occured
+
+#this chouls produce the error result
+(print)((calc_2)((calc_error)((calc_1)(1))))
+# pipe 1 into calc_1
+# calc_error will result in an ErrorResult
+# calc_2 will not do any calculation, but will return the ErrorResult from the previous calculation
+# print
+
+(print)((calc_2)((calc_2)((calc_1)(1))))

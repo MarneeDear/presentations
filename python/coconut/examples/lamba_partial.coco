@@ -1,0 +1,11 @@
+# LAMBDAS
+dubsums = map((x, y) -> 2*(x+y), range(0, 10), range(10, 20))
+# the map function is a function of x and y ( 2 times x plus y)
+# the vlaues of x are 0 to 10
+# the values of y are 10 to 20
+"OUTPUT OF LAMBDA" |> print
+dubsums |> list |> print
+
+partialsums = (range(0,10), range(10,20)) |*> map$((x,y) -> 2*(x+y))
+"OUTPUT OF PARTIAL LAMBA" |> print
+partialsums |> list |> print

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xba9353a8
+# __coconut_hash__ = 0x808a11e6
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -455,20 +455,45 @@ _coconut_MatchError, _coconut_count, _coconut_enumerate, _coconut_reversed, _coc
 
 # Compiled Coconut: ------------------------------------------------------
 
-def factorial(n):
-    """Compute n! where n is an integer >= 0."""
-    if (isinstance)(n, int) and n >= 0:
-        acc = 1
-        for x in range(1, n + 1):
-            acc *= x
-        return acc
-    else:
-        raise TypeError("the argument to factorial must be an integer >= 0")
+from collections import namedtuple
 
-# Test cases:
-#
-# -1 |> factorial |> print  # TypeError
-# 0.5 |> factorial |> print  # TypeError
-# 0 |> factorial |> print  # 1
-# 3 |> factorial |> print  # 6
-#
+ErrorResult = namedtuple("ErrorResult", "Message")
+
+test = ErrorResult(Message="THIS IS A TEST")
+
+def calc_1(result):
+    if isinstance(result, ErrorResult):
+        print("error calc_1")
+        return result
+    else:
+# do something with the result
+        print("calculating calc_1")
+        return result * 100
+
+def calc_2(result):
+    if isinstance(result, ErrorResult):
+        print("error calc_2")
+        return result
+    else:
+# do something with the result
+        print("calculating calc_2")
+        return result * 200
+
+def calc_error(result):
+# FORCE AN ERROR FOR THIS EXAMPLE
+    print("returning an error")
+    return test
+
+# calc_1(test) |> print
+# calc_2(test) |> print
+
+# calc_error(1) |> print
+
+#NOW we can build a pipeline and short circuit any processing if an error occured
+
+#this chouls produce the error result
+(print)((calc_2)((calc_error)((calc_1)(1))))
+# pipe 1 into calc_1
+# calc_error will result in an ErrorResult
+# calc_2 will not do any calculation, but will return the ErrorResult from the previous calculation
+# print
