@@ -6,6 +6,7 @@ double_sums = map((x, y) -> 2*(x+y), range(0, 10), range(10, 20))
 "OUTPUT OF LAMBDA" |> print
 double_sums |> list |> print
 
+# LAMBDAS with partial application
 partial_sums = (range(0,10), range(10,20)) |*> map$((x,y) -> 2*(x+y))
 # pipe into the map function a tuple of lists of numbers
 # the map function is made a partial function with the $
