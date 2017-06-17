@@ -2,12 +2,12 @@ from collections import namedtuple
 
 ErrorResult = namedtuple("ErrorResult", "Message")
 
-test = ErrorResult(Message = "THIS IS A TEST")
+test = ErrorResult(Message = "Sorry that didn't quite work out like we planned. This could be a message or an exception object.")
 
 match def checkResult(result, if isinstance(result, ErrorResult)) = result
 
 @addpattern(checkResult)
-def calc_1(result):
+def calc_100(result):
     # if isinstance(result, ErrorResult):
     #     print ("error calc_1")
     #     return result
@@ -17,7 +17,7 @@ def calc_1(result):
     return result * 100
 
 @addpattern(checkResult)
-def calc_2(result):
+def calc_200(result):
     # if isinstance(result, ErrorResult):
     #     print ("error calc_2")
     #     return result
@@ -34,17 +34,39 @@ def calc_error(result):
 
 # calc_1(test) |> print
 # calc_2(test) |> print
-
 # calc_error(1) |> print
 
 #NOW we can build a pipeline and short circuit any processing if an error occured
 
-#this chouls produce the error result
-1 |> calc_1 |> calc_error |> calc_2 |> print
+#this should produce the error result. calc_2 should be skipped
+"CALC WITH ERROR" |> print
+1 |> calc_100 |> calc_error |> calc_200 |> print
 # pipe 1 into calc_1
 # calc_error will result in an ErrorResult
 # calc_2 will not do any calculation, but will return the ErrorResult from the previous calculation
 # print
 
-1 |> calc_1 |> calc_2 |> calc_2 |> print
+# this is what happens where there is no error
+# we get the final result of all of the calculations
+"CALC WITHOUT ERROR" |> print
+1 |> calc_100 |> calc_200 |> calc_200 |> print
+
+# This is a simple example but you can use exception handlilng to return an ErrorResult tuple in each function
+# Like this
+
+@addpattern(checkResult)
+def calc_with_exception(result):
+    try:
+        "TRYING TO CALCULATE A STRING?" |> print
+        something = result * 300
+        return something # result * 300
+    except Exception as e:
+        "SOMETHING HAPPENED" |> print
+        return ErrorResult(Message = "SOMETHING WENT WRONG")
+
+"OUTPUT WITHOUT EXCEPTION" |> print
+100 |> calc_with_exception |> calc_100 |> calc_200 |> print
+
+"OUTPUT WITH EXCEPTION" |> print
+"100" |> calc_with_exception |> print # |> calc_1 |> calc_2 |> print
 
