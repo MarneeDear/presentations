@@ -2,9 +2,19 @@
 
 # The basic idea behind virtual environments
 
-With `pip` we can install Python packages. By default these are installed system-wide in the same location as Python. This means that any code you write will have access to those libraries. But what if you are writing code that needs a different version of a particular library than some of your other projects? Or what if you want to experiment with different versions or different packages? Managing this all in one location could get complicated fast. But what if you could install your desired packages in separate locations and switch them out whenever you want? You can with virtual environments.
+With `pip` we can install Python packages. By default these are installed system-wide in the same location as Python. This means that any code you write will have access to those libraries. 
+
+**But what if you are writing code that needs a different version of a particular library than some of your other projects?**
+
+**Or what if you want to experiment with different versions or different packages?**
+
+Managing this all in one location could get complicated fast.
+
+**What if you could install your desired packages in separate locations and switch them out whenever you want? You can with virtual environments.**
 
 We can use the `virtualenv` Python library to manage our environments.
+
+You can find the virtualenv user guide [here](https://virtualenv.pypa.io/en/stable/).
 
 # General steps
 
