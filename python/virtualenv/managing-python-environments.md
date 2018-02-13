@@ -47,11 +47,10 @@ This makes Python, Pip, and Wheel installed in your virtualenv folder available 
 
 Now you can install any packages you like into your virtualenv and the files will end up in your virtualenv folder.
 
-You can also dactivate your activated environment by doing this:
+You can also deactivate your activated environment by doing this:
 
 ```bash
 deactivate
 ```
 
 It is the same for operating systems.
-
