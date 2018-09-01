@@ -1,7 +1,12 @@
-What is load testing and why should you do it?
+# What is load testing and why should you do it?
 
-Isolating the variables and knowing your boundaries
-* Find out your bottlenecks and mitigate them
+Load testing helps you understand how your application behaves under load. It helps take the guesswork out of hardware estimates and gives you an idea of what to expact when you application is set lose in the wild with actual users in real life.
+
+# Isolating the variables and knowing your boundaries
+## Find out your bottlenecks and mitigate them
+
+#### These are some potential problems
+
     * Database connection limits
         * RDS size
     * Database configurations
@@ -11,18 +16,46 @@ Isolating the variables and knowing your boundaries
     * Code
     * Network
     * Load balancer
+    * Web server
+        * Apache configuration
+        * IIS configuration
+        * Ngnix configuration
+    * Application
+        * Dependency injection
+        * Caching
+        * Logging
+        * Code
+        * Front end
+        * Server side
+    * Application configuration
+        * Rate limits
+        * Caching
+        * Logging
 
-Find out the load limits of your hardware or virtual machine
+## Find out the limits of your hardware or virtual machine
 * Make better cost estimates
 * Make better judgements on when and how to scale up or to scale out
 * Fine tune a load balancer to adjust to longer response times before timing out
 
-What is Gatling?
+# What is Gatling?
+https://gatling.io/
 
-Getting started
+https://gatling.io/opensource/
 
+Gatling is an Open Source load testing tool and framework that runs on the JVM. You write load test in Scala. It has an extensive API.
+
+# Getting started
+1. Download the installer
+2. Use the recorder to create a simulation
+3. Use this to become familiar with a basic test
+4. Read the documentation and follow the tutorials to learn how to build more complext tests
 
 # Simulations
+
+Simulations are a series of user actions you automate with the Gatling API framework. This is stuff like:
+* Login
+* Go to a page
+* Enter data
 
 ## Using the recorder to create a simulation
 
