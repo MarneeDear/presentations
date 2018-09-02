@@ -38,13 +38,16 @@ Load testing helps you understand how your application behaves under load. It he
 * Fine tune a load balancer to adjust to longer response times before timing out
 
 # What is Gatling?
-https://gatling.io/
+    https://gatling.io/
 
-https://gatling.io/opensource/
+    https://gatling.io/opensource/
 
-Gatling is an Open Source load testing tool and framework that runs on the JVM. You write load test in Scala. It has an extensive API.
+Gatling is an Open Source load testing tool and framework that runs on the JVM. You write your tests in Scala. It has an extensive API.
 
 # Getting started
+### Follow the Quickstart Guide
+    https://gatling.io/docs/current/quickstart/
+
 1. Download the installer
 2. Use the recorder to create a simulation
 3. Use this to become familiar with a basic test
@@ -52,7 +55,7 @@ Gatling is an Open Source load testing tool and framework that runs on the JVM. 
 
 # Simulations
 
-Simulations are a series of user actions you automate with the Gatling API framework. This is stuff like:
+Simulations are a series of user actions you automate with the Gatling API. This is stuff like:
 * Login
 * Go to a page
 * Enter data
@@ -61,6 +64,8 @@ Simulations are a series of user actions you automate with the Gatling API frame
 
 # Adding checks (verify responses)
 #### Checks are really useful. 
+
+    https://gatling.io/docs/current/cheat-sheet/#HTTP%20Checks
 
 #### For example
 
@@ -76,13 +81,107 @@ Simulations are a series of user actions you automate with the Gatling API frame
 
 Let's see some code and see it in action
 
-This repo will have code samples
+### Setup a scenario
+
+```
+val scn = scenario("StudentLoginGetDashboard")
+    .pause(3)
+    .exec(http("login")
+        .post("/?url=%2F")
+        .headers(headers_1)
+        .formParam("action", "login")
+        .formParam("ssobypass", "1")
+        .formParam("username", "beepbopboop")
+        .formParam("password", "badabing")
+```
+
+### Check for login errors
+
+* Was it a 500?
+* Was it a 429 rate limit problem?
+* Was it something else?
+
+```
+        .check(substring("The username or password you have provided is incorrect.").notExists)
+        .check(substring("500 An internal server error has occurred.").notExists)
+        .check(substring("429 An internal authentication error has occurred.").notExists)
+        .check(substring("An internal authentication error has occurred.").notExists)
+        .check(substring("error has occurred").notExists)
+        .check(substring("empty response").notExists)
+        .check(substring("Empty reply").notExists)
+```
+
+### Check for errors and save the count to use later in the output logic
+
+```
+        .check(substring("error has occurred").count.saveAs("errorOccured"))
+```
+
+### Check beepbopboop is on the dashboard
+
+```
+        .check(substring("Message Center").exists)
+```
+
+
+### Print responses for troubleshooting
+
+#### Chained with a doIf
+
+```
+.doIf ( session => session("errorOccured").as[Int] > 0 ) {
+    exec { session =>
+        println(session("loginPageResponse").as[String])
+        //println(session("response1"))
+        session
+    }
+}
+```
+### Chaining it all together into one scenario
+
+```
+val scn = scenario("StudentLoginGetDashboard")
+    .pause(3)
+    .exec(http("login")
+        .post("/?url=%2F")
+        .headers(headers_1)
+        .formParam("action", "login")
+        .formParam("ssobypass", "1")
+        .formParam("username", "beepbopboop")
+        .formParam("password", "badabing")
+        .check(substring("The username or password you have provided is incorrect.").notExists)
+        .check(substring("500 An internal server error has occurred.").notExists)
+        .check(substring("429 An internal authentication error has occurred.").notExists)
+        .check(substring("An internal authentication error has occurred.").notExists)
+        .check(substring("error has occurred").notExists)
+        .check(substring("empty response").notExists)
+        .check(substring("Empty reply").notExists)
+        .check(substring("error has occurred").count.saveAs("errorOccured"))			
+        .check(substring("Message Center").exists)
+        .check(bodyString.saveAs("loginPageResponse"))	
+        )
+        .doIf ( session => session("errorOccured").as[Int] > 0 ) {
+            exec { session =>
+                println(session("loginPageResponse").as[String])
+                session
+            }
+        }
+```
+
+See examples in this repo
+
+    https://github.com/MarneeDear/presentations/tree/drafts/gatling
+
 
 # Load Model for Simulations
 
-The two I use commonly
+This is how you want to model load patterns. You might want to model all the users doing the same thing at the same time, which can give you an idea of your boundaries, but this is probably not the usual pattern. Gatling provides Load Injection functions to model a variety if common load patterns.
+
+The two I use commonly are
 
 #### At Once Users
+
+This gives me an idea of my boundaries.
 
 Run a scenario where 100 users login and all the do same thing at one time
 
@@ -90,12 +189,18 @@ Run a scenario where 100 users login and all the do same thing at one time
 
 #### Ramp Users
 
-Run a scenario where 300 users login and do the same thing but over a 120 second period
+This models a more likely pattern where load ramps up to a peak and decreases over a certain period of time. 
 
-```setUp(scn.inject(rampUsers(300) over (120 seconds))).protocols(httpProtocol) ```
+    For example, for an application we develop at the College of Medicine, we get the most load at the beginning of classes where students have to login and download files. The classes have about 120 students in them and I expect that they will be trying to download the files over a period of about 2 minutes.
+
+Run a scenario where 120 users login and do the same thing but over a 120 second period
+
+```setUp(scn.inject(rampUsers(120) over (120 seconds))).protocols(httpProtocol)```
 
 #### There are lots more
-https://gatling.io/docs/2.3/general/simulation_setup/
+    https://gatling.io/docs/2.3/general/simulation_setup/
+
+Gatling provides a number of injection models to help you model the patterns that best fit your applications.
 
 * nothingFor
 * atOnceUsers
@@ -105,17 +210,24 @@ https://gatling.io/docs/2.3/general/simulation_setup/
 * splitUsers
 * heavisideUsers
 
-# Adding logging
 
 # Configuration
+
+`...\gatling\conf\gatling.conf`
+
+* Connection timeout -- Timeout when establishing a connection
+* Read timeout -- Timeout when a used connection stays idle
+* Request timeout -- Timeout of the requests
+
 
 # Advanced stuff
     You can make this as simple or complex as you like
     You can build functions that you can reuse 
 
-#### The advanced tutorial
+### The advanced tutorial
+    https://gatling.io/docs/current/advanced_tutorial/
 
 
-Gatling v JMeter
-https://octoperf.com/blog/2015/06/08/jmeter-vs-gatling/
-https://dzone.com/articles/gatling-vs-jmeter
+# Gatling v JMeter
+    https://octoperf.com/blog/2015/06/08/jmeter-vs-gatling/
+    https://dzone.com/articles/gatling-vs-jmeter
