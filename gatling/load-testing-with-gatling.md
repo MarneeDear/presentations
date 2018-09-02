@@ -117,12 +117,11 @@ val scn = scenario("StudentLoginGetDashboard")
         .check(substring("error has occurred").count.saveAs("errorOccured"))
 ```
 
-### Check beepbopboop is on the dashboard
+### Check beepbopboop got the dashboard page
 
 ```
         .check(substring("Message Center").exists)
 ```
-
 
 ### Print responses for troubleshooting
 
@@ -210,14 +209,22 @@ Gatling provides a number of injection models to help you model the patterns tha
 * splitUsers
 * heavisideUsers
 
+# Simulation Reports
+
+After a test was run, Getling outputs an HTML report with the response times for every request and nice visualizations to see at a glance how your application performed.
+
+
+
 
 # Configuration
 
 `...\gatling\conf\gatling.conf`
 
-* Connection timeout -- Timeout when establishing a connection
-* Read timeout -- Timeout when a used connection stays idle
-* Request timeout -- Timeout of the requests
+You might want to adjust these settings to best fit your application. For example, if you know you have a page that with a naturally long response time, you might want to keep Gatling from triggering a timeout.
+
+* Timeout when establishing a connection
+* Timeout when a used connection stays idle
+* Timeout of the requests
 
 
 # Advanced stuff
@@ -231,3 +238,17 @@ Gatling provides a number of injection models to help you model the patterns tha
 # Gatling v JMeter
     https://octoperf.com/blog/2015/06/08/jmeter-vs-gatling/
     https://dzone.com/articles/gatling-vs-jmeter
+
+# Related Tech
+
+### Automation
+#### Taurus
+Taurus is a way to wrap tests like JMeter, Gatling, etc. in 'automation-friendly' wrapper and a unified interface to run a bunch of different testing tools
+
+
+    http://gettaurus.org/kb/Index/
+
+    https://www.blazemeter.com/blog/taurus-new-star-test-automation-tools-constellation
+
+#### Using in Jenkins
+    https://gatling.io/continuous-integration/
