@@ -213,8 +213,7 @@ Gatling provides a number of injection models to help you model the patterns tha
 
 After a test was run, Getling outputs an HTML report with the response times for every request and nice visualizations to see at a glance how your application performed.
 
-
-
+![alt text](https://raw.githubusercontent.com/MarneeDear/presentations/drafts/gatling/images/gatling-report.PNG "Sample Simulation Report")
 
 # Configuration
 
