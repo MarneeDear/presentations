@@ -62,6 +62,10 @@ Simulations are a series of user actions you automate with the Gatling API. This
 
 ## Using the recorder to create a simulation
 
+I will demo how to do this but you can see how to do this in the quickstart guide.
+
+    https://gatling.io/docs/current/quickstart/
+
 # Adding checks (verify responses)
 #### Checks are really useful. 
 
