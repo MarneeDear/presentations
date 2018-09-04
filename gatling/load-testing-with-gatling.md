@@ -82,8 +82,7 @@ I will demo how to do this but you can see how to do this in the quickstart guid
 * The content to make sure I got the right page 
 * The content for error messages
 * The content to make sure I got the right data
-
-Let's see some code and see it in action
+* The content to make sure the page renders as expected
 
 ### Setup a scenario
 
@@ -212,6 +211,8 @@ Gatling provides a number of injection models to help you model the patterns tha
 * rampUsersPerSec
 * splitUsers
 * heavisideUsers
+
+# Let's see it in action
 
 # Simulation Reports
 
