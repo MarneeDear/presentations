@@ -1,0 +1,15 @@
+def quick_sort([]) = []
+
+@addpattern(quick_sort)
+def quick_sort([head] + tail) =
+    """Sort the input sequence using the quick sort algorithm."""
+    (quick_sort([x for x in tail if x < head])
+        + [head]
+        + quick_sort([x for x in tail if x >= head]))
+
+# Test cases:
+# [] |> quick_sort |> print  # []
+# [3] |> quick_sort |> print  # [3]
+# [0,1,2,3,4] |> quick_sort |> print  # [0,1,2,3,4]
+# [4,3,2,1,0] |> quick_sort |> print  # [0,1,2,3,4]
+# [3,0,4,2,1] |> quick_sort |> print  # [0,1,2,3,4]
