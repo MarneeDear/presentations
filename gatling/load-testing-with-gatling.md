@@ -1,6 +1,6 @@
 # What is load testing and why should you do it?
 
-Load testing helps you understand how your application behaves under load. It helps take the guesswork out of hardware estimates and gives you an idea of what to expact when you application is set lose in the wild with actual users in real life.
+Load testing helps you understand how your application behaves under load. It helps take the guesswork out of hardware estimates and gives you an idea of what to expect when you application is set lose in the wild with actual users in real life.
 
 # Isolating the variables and knowing your boundaries
 ## Find out your bottlenecks and mitigate them
