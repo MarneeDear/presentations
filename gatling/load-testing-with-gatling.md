@@ -31,6 +31,7 @@ Load testing helps you understand how your application behaves under load. It he
         * Rate limits
         * Caching
         * Logging
+        * Jobs competing for resources
 
 ## Find out the limits of your hardware or virtual machine
 * Make better cost estimates
