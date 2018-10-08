@@ -23,3 +23,16 @@ less, more, pwd, whoami,
 
 # Automating Tasks with BaSH Scripting
 Have them create 100 files with a sequential name and content
+
+
+
+# Setting up bash emulator on Windows
+
+
+# Notes on using with Python or other scripting languages
+
+# Places where I use bash scripting
+build and deploy automation
+devops like deploy virtual machines in the cloud
+monitoring
+server maintenance
