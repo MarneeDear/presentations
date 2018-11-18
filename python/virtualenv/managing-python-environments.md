@@ -34,6 +34,12 @@ mkdir virtualenvname
 
 You should name the folder something that matches the environment because you will likely end up with more than one at some point. This is up to you but try to be precise.
 
+Now you just have to activate your virtual environment, and you should be able to use all of your Python things...
+
+```bash
+activate virtualenvname
+```
+
 Now you can tell `virtualenv` to do its thing:
 
 ```bash
