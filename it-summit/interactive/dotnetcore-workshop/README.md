@@ -313,9 +313,9 @@ Remember the usage? `dotnet run -h` can help.
 dotnet run
 ```
 
-By default, if no `-p, --project` option passed, `dotnet` will try to find a project file in the current folder, and if it finds an executeable project, it will do run on that application.
+By default, if no `-p, --project` option passed, `dotnet` will try to find a project file in the current folder, and if it finds an executeable project, it will do the run on that application.
 
-If it seems slow, this is ok. That is because `dotnet run` is restoring and building first. 
+If it seems slow, this is ok. That is because `dotnet run` is restoring and building first.
 
 If the `run` worked, you should see some friendly output:
 
@@ -325,13 +325,169 @@ Hello World from F#!
 
 Great! You successfully:
 
-1. Scaffolded a console application
-2. Ran the application
+1. Scaffolded a console application with `dotnet new`
+2. Ran the application with `dotnet run`
 3. And it worked!
 
-In so many steps.
-
 ![demo worked](http://www.quickmeme.com/img/17/1782bf970d9fde6bc597871a032fdc7eee39a99dab42574b20120021edee633b.jpg "First step achievement unlocked")
+
+## Class Library
+
+Let's go through the steps to start a class library.
+
+> Remember that `dotnet new` will scaffold a project with the same name as the containing folder, so remember to cd into the desired folder before running the command.
+
+Let's first go to the `workshop.domain` folder we created earlier. This is where we will scaffold our class library.
+
+```bash
+cd ../workshop.domain
+```
+
+(wait for green stickies)
+
+Do you remember how to see the templates?
+
+```bash
+dotnet new --list
+```
+
+The Class Library templates shortname is `classlib`.
+
+Remember the usage?
+
+```bash
+Examples:
+    dotnet new mvc --auth Individual
+    dotnet new nunit-test
+    dotnet new --help
+```
+
+What command do we use to create a class library using F#?
+
+> The default language is C# so don't forget to specify the language if you want to use something else.
+
+```bash
+dotnet new classlib -lang F#
+```
+
+Let's see what it created.
+
+BaSH/Terminal
+
+```bash
+ls -la
+```
+
+DoS
+
+```dos
+dir
+```
+
+You should see the new project files.
+
+```text
+-rwxrwxrwx 1 marnee marnee 101 Mar 24 13:46 Library.fs
+drwxrwxrwx 1 marnee marnee 512 Mar 24 13:46 obj
+-rwxrwxrwx 1 marnee marnee 219 Mar 24 13:46 workshop.domain.fsproj
+```
+
+(wait for stickies)
+
+Here we see the `proj` file again. And a file called `Libary.fs` with a bit of code in it.
+
+Since Class Libaries are not executable we can't run `dotnet run` on it. But we can reference it in an executable project, like a console application, and reference and use the class library in that project.
+
+> You can't access code in a separate project without referencing in.
+
+> References go in the `proj` file using certain XML elements and attributes.
+
+Let's try that.
+
+### dotnet add
+
+First, go up one level to the `src` file. This will make it easier to write the commands.
+
+```bash
+cd ..
+```
+
+Let's reference `workshop.domain` in `workshop.cli`.
+
+To do that we use the `dotnet add` command. Let's see the usage and options.
+
+```bash
+dotnet add -h
+```
+
+```text
+Usage: dotnet add [options] <PROJECT> [command]
+```
+
+```text
+Arguments:
+  <PROJECT>   The project file to operate on. If a file is not specified, the command will search the current directory for one.
+```
+
+This is the path/project file to the project to which you want to add the reference. In this case it is the path to the `workshop.cli` project file. We will see this later.
+
+```text
+Commands:
+  package <PACKAGE_NAME>     Add a NuGet package reference to the project.
+  reference <PROJECT_PATH>   Add a project-to-project reference to the project.
+```
+
+* <PROJECT_PATH> is the path to the class library you want to use in your project.
+
+How would we reference `workshop.domain` from `workshop.cli`.
+
+```bash
+dotnet add workshop.cli reference workshop.domain
+```
+
+> Pro tip: user tab complete. Type out a few characters and then hit tab. The command line will try to complete the path for you. This is available in both BaSH and DoS
+
+You should see this output.
+
+```text
+Reference `..\workshop.domain\workshop.domain.fsproj` added to the project.
+```
+
+Let's see what happened to the proj file. Let's print the content to the screen.
+
+BaSH/Terminal
+
+```bash
+cat workshop.cli\workshop.cli.fsproj
+```
+
+DoS
+
+```dos
+type workshop.cli\workshop.cli.fsproj
+```
+
+Notice this XML element:
+
+```xml
+ <ItemGroup>
+    <ProjectReference Include="..\workshop.domain\workshop.domain.fsproj" />
+  </ItemGroup>
+```
+
+(wait for stickies)
+
+(resolve problems if any)
+
+## Review
+
+We learned how to:
+
+* scaffold a console and class library using `dotnet new`
+* run a console app using `dotnet run`
+* add a reference to the class library using `dotnet add`
+
+(take a break and answer questions)
 
 **********************************
 NOTES FOR FURTHER DEVELOPMENT
