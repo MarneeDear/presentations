@@ -193,7 +193,7 @@ interactive-workshop
                                                     |
                                                     workshop.cli (folder)
                                                     workshop.domain (folder)
-                                                    workshop.infrastructure (folder)
+                                                    workshop.test (folder)
                                                     workshop.web (folder)
 ```
 
@@ -205,7 +205,7 @@ On the bash command-line this looks like this:
 mkdir src
 mkdir src/workshop.cli
 mkdir src/workshop.domain
-mkdir src/workshop.infrastructure
+mkdir src/workshop.test
 mkdir src/workshop.web
 ```
 
@@ -305,7 +305,7 @@ Additional Arguments:
   Arguments passed to the application that is being run.
 ```
 
-Cool! We have a lot of options. Let's try running the default options first. 
+Cool! We have a lot of options. Let's try running the default options first.
 
 Remember the usage? `dotnet run -h` can help.
 
@@ -330,6 +330,8 @@ Great! You successfully:
 3. And it worked!
 
 ![demo worked](http://www.quickmeme.com/img/17/1782bf970d9fde6bc597871a032fdc7eee39a99dab42574b20120021edee633b.jpg "First step achievement unlocked")
+
+(wait for stickies)
 
 ## Class Library
 
@@ -439,13 +441,13 @@ Commands:
 
 * <PROJECT_PATH> is the path to the class library you want to use in your project.
 
-How would we reference `workshop.domain` from `workshop.cli`.
+How would we reference `workshop.domain` from `workshop.cli`?
 
 ```bash
 dotnet add workshop.cli reference workshop.domain
 ```
 
-> Pro tip: user tab complete. Type out a few characters and then hit tab. The command line will try to complete the path for you. This is available in both BaSH and DoS
+> Pro tip: use tab complete. Type out a few characters and then hit tab. The command line will try to complete the path for you. This is available in both BaSH and DoS.
 
 You should see this output.
 
@@ -488,6 +490,140 @@ We learned how to:
 * add a reference to the class library using `dotnet add`
 
 (take a break and answer questions)
+
+![review1](https://memegenerator.net/img/instances/84268854/dotnet-created-two-projects-and-a-reference-so-i-guess-you-could-say-things-are-getting-pretty-serio.jpg "Things are getting pretty serious")
+
+## Scaffold a test project
+
+First, get yourself into the `workshop.test` folder.
+
+```bash
+cd ../workshop.test
+```
+
+> Pro tip: tab complete is your best friend.
+
+`dotnet new` comes with templates for creating xUnit and nUnit test projects. Those are great, but let's use something for `functional programming oriented.` Let's use `Expecto`. 
+
+Expecto publishes a `dotnet` template that we can install and then use.
+
+Go to the [Expecto template on Github](https://github.com/MNie/Expecto.Template).
+
+You'll see instructions on how to install the template from Nuget (Nuget is a .NET package manager and repository).
+
+```bash
+dotnet new -i Expecto.Template
+```
+
+`-i` is the `option` for installing new templates.
+
+You should see output that looks like the `dotnet new -h` command. Notice in the templates list that there is a new template:
+
+```text
+Expecto .net core Template                        expecto            F#                Test
+```
+
+Now we can use it to scaffold a new Expecto project.
+
+```bash
+dotnet new expecto -lang F#
+```
+
+Let's see what it created.
+
+BaSH/Terminal
+
+```bash
+ls -la
+```
+
+DoS
+
+```dos
+dir
+```
+
+```text
+-rwxrwxrwx 1 marnee marnee  123 Mar 24 20:41 Main.fs*
+-rwxrwxrwx 1 marnee marnee 1206 Mar 24 20:41 Sample.fs*
+-rwxrwxrwx 1 marnee marnee  639 Mar 24 20:41 workshop.test.fsproj*
+```
+
+Notice that we have a `proj` file and two sample test files.
+
+(wait for stickies)
+
+### Run the tests
+
+We can use `dotnet run` to run tests because technically they are console apps with a  bit of extra code scaffolded to create sample tests.
+
+Let's try it.
+
+```bash
+dotnet run
+```
+
+You should see a bunch of output and stuff that looks like errors. That's ok. Some of the tests are meant to fail as demonstrations in the sample code. The most interesting bit in the last line.
+
+```text
+20:56:42 INF] EXPECTO! 8 tests run in 00:00:00.8850460 for samples – 2 passed, 1 ignored, 5 failed, 0 errored.  <Expecto
+```
+
+Here we see a report of the number of tests that failed, were ignored, and passed.
+
+(wait for stickies)
+
+We will write more tests later.
+
+## Domain model and domain logic
+
+Get yourself to the `workshop.domain` folder. Let's build our domain with a little F#.
+
+```bash
+cd ../workshop.domain
+```
+
+### The domain
+
+We work at a University so let's model a course.
+
+```text
+Field         Type      Constraints
+
+Number        int       5 digits
+Name          string    100 chars
+Description   string    500 chars
+Credits       int       less than 4
+Department    int       must be a valid department code
+```
+
+Ok that's good enough to get started.
+
+With your favorite editor open the Library.fs file.
+
+Let's model the `Department` first. For this we will use a `discriminated union`.
+
+## write tests against your domain
+
+![testing](https://memegenerator.net/img/instances/84268890/no-ui-but-i-got-automated-unit-tests-so-i-got-that-going-for-me-which-is-nice.jpg "Automated unit tests")
+
+
+## write a command line tool to do something like
+
+## Adding a package reference with Argu
+
+https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg
+
+## use template to scaffold Saturn
+
+## Open the build script and walk through it
+
+## use fake to build and run the default project
+
+## talk about the global file
+
+## Solution file
+TIE IT ALL TOGETHER
 
 **********************************
 NOTES FOR FURTHER DEVELOPMENT
