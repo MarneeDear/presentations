@@ -12,6 +12,8 @@ College of Medicine
 
 Cross-platform software development with .NET Core and F#.
 
+![review1](https://memegenerator.net/img/instances/84273260/tell-me-again-about-how-net-is-only-for-windows.jpg "Naw, it's cross-platform")
+
 ## Topics
 
 * .NET Core
@@ -39,7 +41,7 @@ Cross-platform software development with .NET Core and F#.
 
 We need a folder to work in. Let's create one.
 
-Find a file sytem location that works for you. I am going to do this in my Windows home directory on my Windows Subsystem for Linux environment. This is equivalent to my Windows home directory. If you are on Windows, you can use that too. Use a location that works for you.
+Find a file system location that works for you. I am going to do this in my Windows home directory on my Windows Subsystem for Linux environment. This is equivalent to my Windows home directory. If you are on Windows, you can use that too. Use a location that works for you.
 
 ### Ubuntu
 
@@ -323,7 +325,7 @@ If the `run` worked, you should see some friendly output:
 Hello World from F#!
 ```
 
-Great! You successfully:
+Great success! You just:
 
 1. Scaffolded a console application with `dotnet new`
 2. Ran the application with `dotnet run`
@@ -353,7 +355,7 @@ Do you remember how to see the templates?
 dotnet new --list
 ```
 
-The Class Library templates shortname is `classlib`.
+The Class Library templates short name is `classlib`.
 
 Remember the usage?
 
@@ -398,7 +400,7 @@ drwxrwxrwx 1 marnee marnee 512 Mar 24 13:46 obj
 
 Here we see the `proj` file again. And a file called `Libary.fs` with a bit of code in it.
 
-Since Class Libaries are not executable we can't run `dotnet run` on it. But we can reference it in an executable project, like a console application, and reference and use the class library in that project.
+Since Class Libraries are not executable, we can't run `dotnet run` on it. But we can reference it in an executable project, like a console application, and reference and use the class library in that project.
 
 > You can't access code in a separate project without referencing in.
 
@@ -575,9 +577,151 @@ Here we see a report of the number of tests that failed, were ignored, and passe
 
 We will write more tests later.
 
+## Solution file
+
+Let's create a solution file so we can tie all of our projects together. The solution provides these benefits:
+
+* `dotnet build` all of our projects at one time
+* Visual Studio and Visual Studio Code use the solution file to organize projects
+
+Go up two levels so you are now in the `interactive-workshop` folder.
+
+```bash
+cd ../..
+```
+
+Check to make sure.
+
+```bash
+pwd
+```
+
+```dos
+cd
+```
+
+### dotnet build wihtout a solution file
+
+Let's try building (compiling) code without a solution file.
+
+```bash
+dotnet build
+```
+
+What happened? A whole lotta nothing. But that's ok because we will scaffold a solution file to help us.
+
+```text
+MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
+```
+
+Now use `dotnet new` to create the solution file.
+
+```bash
+dotnet new sln
+```
+
+Let's look inside it to see what happened.
+
+```bash
+ls -la
+```
+
+```dos
+dir
+```
+
+Notice that `dotnet new` created a solution file with the same name as the folder.
+
+```bash
+cat interactive-workshop.sln
+```
+
+```dos
+type interactive-workshop.sln
+```
+
+> Pro tip: tab complete will save you time and money!
+
+That's a lot of weird stuff. It doesn't matter much but it's mostly a bunch of stuff `msbuild` and Visual Studio understand.
+
+Notice that there are no references to any of our workshop projects. That's ok. We are going to add them.
+
+But first try a `dotnet build` to see what happens.
+
+`dotnet` doesn't know what to build. That's ok. We are going to help it.
+
+(wait for stickies)
+
+### dotnet sln add
+
+We have a new command to use that helps us with solution files. Let's see what it does.
+
+```bash
+dotnet sln -h
+```
+
+```text
+Commands:
+  add <PROJECT_PATH>      Add one or more projects to a solution file.
+  list                    List all projects in a solution file.
+  remove <PROJECT_PATH>   Remove one or more projects from a solution file.
+```
+
+Cool! Looks like we can add projects, list projects, and remove projects.
+
+Let's add the `workshop.domain` project.
+
+```bash
+dotnet sln add src/workshop.domain
+```
+
+If that worked you should be able to build now.
+
+```bash
+dotnet build
+```
+
+What happened?
+
+Did it look a little like this?
+
+```text
+Microsoft (R) Build Engine version 15.9.20+g88f5fadfbe for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restoring packages for /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/workshop.domain.fsproj...
+  Generating MSBuild file /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/obj/workshop.domain.fsproj.nuget.g.props.
+  Generating MSBuild file /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/obj/workshop.domain.fsproj.nuget.g.targets.
+  Restore completed in 541.07 ms for /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/workshop.domain.fsproj.
+  workshop.domain -> /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/bin/Debug/netstandard2.0/workshop.domain.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:11.74
+```
+
+Great! That worked. Now try to add the `.cli` and `.test` projects.
+
+```bash
+dotnet sln add workshop.cli
+dotnet sln add workshop.test
+```
+
+(wait for stickies)
+
+What happens when you `dotnet build` now?
+
+(wait for stickies)
+
+Awesome! This will save us time and typing effort and lessen our cognitive burden.
+
+![solution files](https://memegenerator.net/img/instances/84273244/sln-file-build-all-the-things.jpg "Great success!")
+
 ## Domain model and domain logic
 
-Get yourself to the `workshop.domain` folder. Let's build our domain with a little F#.
+Get yourself to the `workshop.domain` folder. Let's code our domain with a little F#.
 
 ```bash
 cd ../workshop.domain
@@ -603,6 +747,172 @@ With your favorite editor open the Library.fs file.
 
 Let's model the `Department` first. For this we will use a `discriminated union`.
 
+It looks like this and you can think of it like an enum.
+
+```fsharp
+module Workshop =
+    type DepartmentCode =
+        | Engineering
+        | Geosciences
+        | FineArts
+```
+
+The department can be for one of three departments:
+* Engineering
+* Geosciences
+* FineArts
+
+Each department has a department code. Let's add a way to get the department code from the DepartmentCode type.
+
+```fsharp
+module Workshop =
+    type DepartmentCode =
+        | Engineering
+        | Geosciences
+        | FineArts
+        member this.ToCode() =
+            match this with
+            | Engineering -> 100
+            | Geosciences -> 200
+            | FineArts    -> 300
+```
+
+Let's add some more. Remember the domain?
+
+```text
+Field         Type      Constraints
+
+Number        int       5 digits
+Name          string    100 chars
+Description   string    500 chars
+Credits       int       less than 4
+Department    int       must be a valid department code
+```
+
+Let's create a type that models everything that makes up a course. We will use a `Record Type` to represent a course.
+
+> Pro tip: copy and paste! Don't type this all.
+
+```fsharp
+    type Course =
+        {
+            Number      : int
+            Name        : string
+            Description : string
+            Credits     : int
+            Department  : Department
+        }
+```
+
+Record types define the shape of your data. You can think of them like properties on a class.
+
+Let's make sure you don't have any syntax errors. Let's run a build. Remember how to do that?
+
+```bash
+dotnet build
+```
+
+Did you get any errors? Try to fix them. I'll help.
+
+(wait for stickies)
+
+The code should currently look ike this:
+
+```fsharp
+namespace workshop.domain
+
+open System
+
+module Say =
+    let hello name =
+        printfn "Hello %s" name
+
+module Workshop =
+    type Department = 
+        | Engineering 
+        | Geosciences
+        | FineArts
+        member this.ToCode() =
+            match this with
+            | Engineering   -> 100
+            | Geosciences   -> 200
+            | FineArts      -> 300
+
+    type Course =
+        {
+            Number : int
+            Name : string
+            Description : string
+            Credits : int
+            Department : Department
+        }
+```
+
+That's nice. Let's code some constraints. Let's look at the domain again.
+
+```text
+Field         Type      Constraints
+
+Number        int       5 digits, less than 100000
+Name          string    100 chars
+```
+
+Let's do name first.
+
+Copy and paste this above `type Course`, and I will explain it.
+
+```fsharp
+    type CourseName = private CourseName of string
+    module CourseName =
+        let create (s:string) =
+            match s.Trim() with
+            | nm when nm.Length <= 100  -> CourseName nm
+            | nm                        -> CourseName (nm.Substring(0, 100))
+        let value (CourseName s) = s
+```
+
+This makes it so that you can **only** create a CourseName type things through the create function.
+
+(wait for stickies)
+
+Now that we have a `CourseName` type we can make the Name field in course that type. Like this.
+
+```fsharp
+    type Course =
+        {
+            Number      : int
+            Name        : CourseName
+            Description : string
+            Credits     : int
+            Department  : Department
+        }
+```
+
+This means that for every instance of a Course type, you wil only be able to set the Name to a value that passes the CourseName constraints. Like this.
+
+```fsharp
+let course =
+  {
+      Number = 9999
+      Name = CourseName.create "Underwater Basket Weaving"
+      Description = "Traditional basket weaving done under water for best effect."
+      Credits = 3
+      Department = FineArts
+  }
+```
+
+Let's see if your code builds. Do you remember how to do that?
+
+```bash
+dotnet build
+```
+
+(wait for stickies)
+
+![testing](https://memegenerator.net/img/instances/84273421/that-cant-be-enough-lines-of-code.jpg
+ "Less boilerplate means more fun")
+
+
 ## write tests against your domain
 
 ![testing](https://memegenerator.net/img/instances/84268890/no-ui-but-i-got-automated-unit-tests-so-i-got-that-going-for-me-which-is-nice.jpg "Automated unit tests")
@@ -612,7 +922,9 @@ Let's model the `Department` first. For this we will use a `discriminated union`
 
 ## Adding a package reference with Argu
 
-https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg
+![testing](https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg "Argu and F# FTW")
+
+
 
 ## use template to scaffold Saturn
 
@@ -622,8 +934,9 @@ https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-an
 
 ## talk about the global file
 
-## Solution file
-TIE IT ALL TOGETHER
+## The dotnet goat path
+
+
 
 **********************************
 NOTES FOR FURTHER DEVELOPMENT
