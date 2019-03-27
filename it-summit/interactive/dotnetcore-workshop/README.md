@@ -912,15 +912,263 @@ dotnet build
 ![testing](https://memegenerator.net/img/instances/84273421/that-cant-be-enough-lines-of-code.jpg
  "Less boilerplate means more fun")
 
+## Write tests against your domain code
 
-## write tests against your domain
+Now that we have some code we can write test against them.
 
-![testing](https://memegenerator.net/img/instances/84268890/no-ui-but-i-got-automated-unit-tests-so-i-got-that-going-for-me-which-is-nice.jpg "Automated unit tests")
+First, we will need to reference the domain project in the test project so we can use that code.
 
+We can do everything by path, so we don't have to change directories. Let's try that.
 
-## write a command line tool to do something like
+Remember the usage?
 
-## Adding a package reference with Argu
+```bash
+Usage: dotnet add [options] <PROJECT> [command]
+Commands:
+  package <PACKAGE_NAME>     Add a NuGet package reference to the project.
+  reference <PROJECT_PATH>   Add a project-to-project reference to the project.
+```
+
+```bash
+dotnet add src/workshop.test reference src/workshop.domain
+```
+
+Now let's check the `proj` file.
+
+BaSH/Terminal
+
+```bash
+cat src/workshop.test/workshop.test.fsproj
+```
+
+DoS
+
+```dos
+type src\workshop.test\workshop.test.fsproj
+```
+
+> Pro tip: If you aren't using tab complete then you are doing it wrong.
+
+Did you see this?
+
+```xml
+<ItemGroup>
+    <ProjectReference Include="..\workshop.domain\workshop.domain.fsproj" />
+</ItemGroup>
+```
+
+(wait for stickies)
+
+Great. Now let's write a test.
+
+Create a new file and open it in your editor. I will use vim and Visual Studio Code.
+
+```bash
+vim src/workshop.test/DomainTests.fs
+```
+
+```bash
+code src/workshop.test/DomainTests.fs
+```
+
+Add the code:
+
+```fsharp
+module DomainTests
+
+open Expecto
+open workshop.domain
+
+[<Tests>]
+let tests =
+  testList "Course Tests" [
+      testCase "Engineering convert to code 100" <| fun _ ->
+        Expect.equal (Workshop.Engineering.ToCode()) 100 "Engineering course code should be 100"
+  ]
+
+```
+
+> Pro tip: You can copy and paste. Don't type it all in.
+
+Save the file.
+
+Now we need to add the file to the project file. This is to the compiler knows what to compile. Plus, in F# the order of the files matters.
+
+Open `workshop.test.fsproj`. Add the file in the right order. Also, let's remove the `Samples.fs` file to keep it simple.
+
+```xml
+<ItemGroup>
+  <Compile Include="DomainTests.fs" />
+  <Compile Include="Main.fs" />
+</ItemGroup>
+```
+
+Let's check out code by building the test project. Let's take the easy way and just build the solution.
+
+```bash
+dotnet build
+```
+
+(wait for stickies)
+
+If it is building, let's run the tests.
+
+```bash
+dotnet test
+```
+
+Did you notice that we don't need to specify a test project? `dotnet` will iterate through each project in the solution file looking for a test project. When it finds one it will try to run the tests.
+
+```text
+Build started, please wait...
+Skipping running test for project /mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/workshop.cli.fsproj. To run tests with dotnet test add "<IsTestProject>true<IsTestProject>" property to project file.
+Skipping running test for project /mnt/c/Users/Marnee/interactive-workshop/src/workshop.domain/workshop.domain.fsproj. To run tests with dotnet test add "<IsTestProject>true<IsTestProject>" property to project file.
+Build completed.
+
+Test run for /mnt/c/Users/Marnee/interactive-workshop/src/workshop.test/bin/Debug/netcoreapp2.2/workshop.test.dll(.NETCoreApp,Version=v2.2)
+Microsoft (R) Test Execution Command Line Tool Version 15.9.0
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+```
+
+And then the results of the test.
+
+```bash
+Total tests: 1. Passed: 1. Failed: 0. Skipped: 0.
+```
+
+* Total tests : 1
+* Passed: 1
+* Failed: 0
+* Skipped: 0
+
+This looks good. We had one test and it passed. Yay!
+
+(wait for stickies)
+
+![very nice](https://memegenerator.net/img/instances/84277806/no-ui-but-unit-tests-so-i-got-that-going-for-me-which-is-nice.jpg "Automated unit tests and very nice")
+
+If we have time I'll take us through writing another test and talk about Expecto.
+
+### dotnet watch
+
+Wouldn't it be cool if we could automatically make the tests run whenever any code changes? You can!
+
+We can use `dotnet watch` to do this.
+
+```bash
+dotnet watch -h
+```
+
+```text
+Examples:
+  dotnet watch run
+  dotnet watch test
+```
+
+```bash
+dotnet watch -p src/workshop.test test
+```
+
+```text
+watch : Started
+Build started, please wait...
+Build completed.
+
+Test run for /mnt/c/Users/Marnee/interactive-workshop/src/workshop.test/bin/Debug/netcoreapp2.2/workshop.test.dll(.NETCoreApp,Version=v2.2)
+Microsoft (R) Test Execution Command Line Tool Version 15.9.0
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+
+Total tests: 1. Passed: 1. Failed: 0. Skipped: 0.
+Test Run Successful.
+Test execution time: 25.3014 Seconds
+watch : Exited
+watch : Waiting for a file to change before restarting dotnet...
+```
+
+Neat!
+
+Ok, now what would happen if I changed the domain model? Let's try it.
+
+In `workshop.domain` change the Engineer code to 500 and then check back in your command line.
+
+> Those of you not using a desktop, maybe you can use screen? Or just play along. I will demo.
+
+Your test should have failed.
+
+Now change the code back and see your test pass.
+
+![testing](https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fblairoracle.com%2Fwp-content%2Fuploads%2F2017%2F01%2Fma.jpg&f=1
+ "Argu and F# FTW")
+
+ > Stop the dotnet watch with `Ctl + C` or `Ctl + D`
+
+## Write a command line tool
+
+Ok we are cooking with gas! Let's build a CLI. We are going to use a package called Argu that will help us quickly write a command line parser.
+
+## Add a package reference to Argu
+
+In order to use Argu in `workshop.cli` we will need to pull in the package.
+
+First, remember how to add a dependency?
+
+```bash
+dotnet add -h
+```
+
+```text
+Usage: dotnet add [options] <PROJECT> [command]
+
+Commands:
+  package <PACKAGE_NAME>     Add a NuGet package reference to the project.
+```
+
+```bash
+dotnet add src/workshop.cli package Argu
+```
+
+This will download the package from `nuget` and add a reference in the `proj` file.
+
+Did you see this?
+
+```text
+:
+:
+:
+
+log  : Installing Argu 5.2.0.
+info : Package 'Argu' is compatible with all the specified frameworks in project '/mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/workshop.cli.fsproj'.
+info : PackageReference for package 'Argu' version '5.2.0' added to file '/mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/workshop.cli.fsproj'.
+info : Committing restore...
+info : Writing lock file to disk. Path: /mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/obj/project.assets.json
+log  : Restore completed in 7.41 sec for /mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/workshop.cli.fsproj.
+```
+
+You're the best!
+
+(wait for stickies)
+
+We also need to reference `workshop.domain` so we can use it in our CLI.
+
+Can you figure it out yourself?
+
+```bash
+dotnet add src/workshop.test reference src/workshop.domain
+```
+
+Let's try to use it in the CLI.
+
+Open `workshop.cli/Program.fs`.
+
+Here is some code.
+
+```fsharp
+open Argu
+```
 
 ![testing](https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg "Argu and F# FTW")
 
