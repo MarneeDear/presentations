@@ -1218,7 +1218,7 @@ If we have time I will show more how to use Argu.
 
 ## Publish your code to ... somewhere
 
-Ok let's say you are ready to publish your code. You want to share the working version with the world, but you don't want users to have to run the `dotnet` command. You want them to just use your cli. You can publish your command and all of it's dependencies. You can then execute the command like you would any other program. You can even put a reference in your environment or `/usr/bin`. Whatever works for you.
+Ok let's say you are ready to publish your code. You want to share the working version with the world, but you don't want users to have to run the `dotnet` command. You want them to just use your cli. You can publish your command and all of its dependencies. You can then execute the command like you would any other program. You can even put a reference in your environment or `/usr/bin`. Whatever works for you.
 
 Let's see the usage.
 
