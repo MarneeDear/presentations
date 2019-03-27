@@ -1003,7 +1003,7 @@ Open `workshop.test.fsproj`. Add the file in the right order. Also, let's remove
 </ItemGroup>
 ```
 
-Let's check out code by building the test project. Let's take the easy way and just build the solution.
+Let's check the code by building the test project. Let's take the easy way and just build the solution.
 
 ```bash
 dotnet build
