@@ -158,7 +158,7 @@ Solution File                                     sln                           
 
 We have a lot of built-in templates. 
 
-The first column is the template, the second is the short name, which is used in the `dotnet new` command, and the third is the language supported by that template. Notice we have lot's of F# templates available.
+The first column is the template, the second is the short name, which is used in the `dotnet new` command, and the third is the language supported by that template. Notice we have lots of F# templates available.
 
 These are the templates we are going to start with:
 
