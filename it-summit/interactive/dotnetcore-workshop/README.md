@@ -1170,9 +1170,219 @@ Here is some code.
 open Argu
 ```
 
+Let's build it to check for errors:
+
+```bash
+dotnet build
+```
+
+(wait for stickies)
+
+Let's run it without building to save tme.
+
+```bash
+dotnet run --no-build -p src/workshop.cli/
+```
+
+Ooops! The CLI doesn't know what we want, but we didnt write any of that code. Argu did it for us!
+
+Let's try that a different way. `dotnet` has a way to pass custom parameters to `dotnet run`.
+
+First you have your dotnet command followed by `--` followed by the parameters.
+
+What is our command usage?
+
+```bash
+dotnet run --no-build -p src/workshop.cli/ -- --help
+```
+
+```text
+USAGE: workshop [--help] [--departmentcode <dept>]
+
+OPTIONS:
+
+    --departmentcode <dept>
+                          specify a course code.
+    --help                display this list of options.
+```
+
+Let's try passing the department code like this.
+
+```bash
+dotnet run --no-build -p src/workshop.cli/ -- --departmentcode 100
+```
+
 ![testing](https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg "Argu and F# FTW")
 
+If we have time I will show more how to use Argu.
 
+## Publish your code to ... somewhere
+
+Ok let's say you are ready to publish your code. You want to share the working version with the world, but you don't want users to have to run the `dotnet` command. You want them to just use your cli. You can publish your command and all of it's dependencies. You can then execute the command like you would any other program. You can even put a reference in your environment or `/usr/bin`. Whatever works for you.
+
+Let's see the usage.
+
+```bash
+dotnet publish -h
+```
+
+```text
+Usage: dotnet publish [options] <PROJECT>
+```
+
+Lots of options. Let's focus on this one for right now.
+
+```bash
+-o, --output <OUTPUT_DIR>             The output directory to place the published artifacts in.
+```
+
+This will tell dotnet where to put your published files.
+
+Let's try that. First create a publish directory.
+
+```bash
+mkdir publish
+```
+
+Let's publish. Notice the `path` I put there. `dotnet` will try to create the publish file in the same directory as the project you are publishing. If we give it the relative path it will publish there, instead.
+
+```bash
+dotnet publish -o ../../publish src/workshop.cli
+```
+
+(wait for stickies)
+
+Check the publish folder contents.
+
+BaSH/Terminal
+
+```bash
+ls -la publish
+```
+
+DoS
+
+```dos
+dir publish
+```
+
+We have a lot of stuff in there. 
+
+Let's try that.
+
+```bash
+./publish/workshop.cli.dll
+```
+
+```dos
+publish\workshop.cli.exe
+```
+
+What happened? Did you get an error?
+
+```text
+Unhandled Exception: System.IO.FileNotFoundException: Could not load file or assembly 'System.Runtime, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The system cannot find the file specified.
+```
+
+Yep. This is because the way we published it means we need to use the dotnet command to run it. This means that if you give this to someone else to run, they will need to have dotnet installed. Let's try running it that way and then we will publish a standalone executable.
+
+https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli
+
+```bash
+dotnet publish/workshop.cli.dll
+```
+
+Did you see the output from before? Yes, because you are awesome.
+
+(wait for stickies)
+
+Having a dependency on `dotnet` isn't much fun, though. But that is ok because we can publish our cli as a stand alone such that all dependencies are `self-contained`. Can you guess what the option will be?
+
+
+```bash
+dotnet publish -h
+```
+
+```text
+--self-contained                      Publish the .NET Core runtime with your application so the runtime doesn't need to be installed on the target machine.
+                                        The default is 'true' if a runtime identifier is specified.
+```
+
+Let's try that.
+
+```bash
+dotnet publish --self-contained -o ../../publish src/workshop.cli
+```
+
+(wait for stickies)
+
+Did you get an error? 
+
+```text
+error NETSDK1031: It is not supported to build or publish a self-contained application without specifying a RuntimeIdentifier.  Please either specify a RuntimeIdentifier or set SelfContained to false. [/mnt/c/Users/Marnee/interactive-workshop/src/workshop.cli/workshop.cli.fsproj]
+```
+
+That's ok. We need to specify a runtime identifier. This is basically the environment you want to run it on.
+
+This is the usage.
+
+```text
+-r, --runtime <RUNTIME_IDENTIFIER>    The target runtime to publish for. This is used when creating a self-contained deployment.
+                                        The default is to publish a framework-dependent application.
+```
+
+Let's do that. Here are some common identifiers.
+
+* win10-x64 (Windows 10)
+* linux-x64 (Most desktop distributions like CentOS, Debian, Fedora, Ubuntu and derivatives)
+* osx.10.14-x64 (MacOS Mojave)
+
+Find the entire catalog [here](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) if I didn't list yours above.
+
+```bash
+dotnet publish -r linux-x64 --self-contained -o ../../publish src/workshop.cli
+```
+
+No errors. Let's see what is inside the publish folder.
+
+```bash
+ls -la publish
+```
+
+```dos
+dir publish
+```
+
+That's a lot more stuff than we had before. Do you see
+
+```text
+workshop.cli.*
+```
+
+That is your "executeable" program.
+
+(wait for stickies)
+
+What happens if we try to run it?
+
+```bash
+ ./publish/workshop.cli
+```
+
+That looks familiar. Let's give it a department code.
+
+```bash
+ ./publish/workshop.cli --departmentcode 100
+```
+
+ It works!
+
+(wait for stickies)
+
+![testing](https://memegenerator.net/img/instances/84279739/i-dont-always-publish-but-when-i-do-i-make-it-self-contained.jpg "Good guy greg uses dotnet core")
+
+
+![testing](https://memegenerator.net/img/instances/84279720/builds-on-windows-publishes-cross-platform.jpg "Good guy greg uses dotnet core")
 
 ## use template to scaffold Saturn
 
