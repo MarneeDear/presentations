@@ -766,15 +766,23 @@ Each department has a department code. Let's add a way to get the department cod
 
 ```fsharp
 module Workshop =
-    type DepartmentCode =
-        | Engineering
+    type Department = 
+        | Engineering 
         | Geosciences
         | FineArts
+        | NotFound
         member this.ToCode() =
             match this with
-            | Engineering -> 100
-            | Geosciences -> 200
-            | FineArts    -> 300
+            | Engineering   -> 100
+            | Geosciences   -> 200
+            | FineArts      -> 300
+            | NotFound      -> 0
+        override this.ToString() =
+            match this with
+            | Engineering   -> "Engineering"
+            | Geosciences   -> "Geosciences"
+            | FineArts      -> "Fine Arts"
+            | _             -> String.Empty
 ```
 
 Let's add some more. Remember the domain?
@@ -797,7 +805,7 @@ Let's create a type that models everything that makes up a course. We will use a
     type Course =
         {
             Number      : int
-            Name        : string
+            Name        : CourseName
             Description : string
             Credits     : int
             Department  : Department
@@ -832,19 +840,34 @@ module Workshop =
         | Engineering 
         | Geosciences
         | FineArts
+        | NotFound
         member this.ToCode() =
             match this with
             | Engineering   -> 100
             | Geosciences   -> 200
             | FineArts      -> 300
+            | NotFound      -> 0
+        override this.ToString() =
+            match this with
+            | Engineering   -> "Engineering"
+            | Geosciences   -> "Geosciences"
+            | FineArts      -> "Fine Arts"
+            | _             -> String.Empty
+
+    let getDepartment code =
+        match code with
+        | 100   -> Engineering
+        | 200   -> Geosciences
+        | 300   -> FineArts
+        | _     -> NotFound
 
     type Course =
         {
-            Number : int
-            Name : string
+            Number      : int
+            Name        : CourseName
             Description : string
-            Credits : int
-            Department : Department
+            Credits     : int
+            Department  : Department
         }
 ```
 
@@ -862,13 +885,13 @@ Let's do name first.
 Copy and paste this above `type Course`, and I will explain it.
 
 ```fsharp
-    type CourseName = private CourseName of string
-    module CourseName =
-        let create (s:string) =
-            match s.Trim() with
-            | nm when nm.Length <= 100  -> CourseName nm
-            | nm                        -> CourseName (nm.Substring(0, 100))
-        let value (CourseName s) = s
+type CourseName = private CourseName of string
+module CourseName =
+    let create (s:string) =
+        match s.Trim() with
+        | nm when nm.Length <= 100  -> CourseName nm
+        | nm                        -> CourseName (nm.Substring(0, 100))
+    let value (CourseName s) = s
 ```
 
 This makes it so that you can **only** create a CourseName type things through the create function.
@@ -878,14 +901,14 @@ This makes it so that you can **only** create a CourseName type things through t
 Now that we have a `CourseName` type we can make the Name field in course that type. Like this.
 
 ```fsharp
-    type Course =
-        {
-            Number      : int
-            Name        : CourseName
-            Description : string
-            Credits     : int
-            Department  : Department
-        }
+type Course =
+    {
+        Number      : int
+        Name        : CourseName
+        Description : string
+        Credits     : int
+        Department  : Department
+    }
 ```
 
 This means that for every instance of a Course type, you wil only be able to set the Name to a value that passes the CourseName constraints. Like this.
@@ -901,6 +924,71 @@ let course =
   }
 ```
 
+The whole file.
+
+```fsharp
+namespace workshop.domain
+
+open System
+
+module Say =
+    let hello name =
+        printfn "Hello %s" name
+
+module Workshop =
+    type Department = 
+        | Engineering 
+        | Geosciences
+        | FineArts
+        | NotFound
+        member this.ToCode() =
+            match this with
+            | Engineering   -> 100
+            | Geosciences   -> 200
+            | FineArts      -> 300
+            | NotFound      -> 0
+        override this.ToString() =
+            match this with
+            | Engineering   -> "Engineering"
+            | Geosciences   -> "Geosciences"
+            | FineArts      -> "Fine Arts"
+            | _             -> String.Empty
+
+    let getDepartment code =
+        match code with
+        | 100   -> Engineering
+        | 200   -> Geosciences
+        | 300   -> FineArts
+        | _     -> NotFound
+
+    type CourseName = private CourseName of string
+    module CourseName =
+        let create (s:string) =
+            match s.Trim() with
+            | nm when nm.Length <= 100  -> CourseName nm
+            | nm                        -> CourseName (nm.Substring(0, 100))
+        let value (CourseName s) = s   
+
+    type Course =
+        {
+            Number      : int
+            Name        : CourseName
+            Description : string
+            Credits     : int
+            Department  : Department
+        }
+
+    let testCourse =
+      {
+          Number = 9999
+          Name = CourseName.create "Underwater Basket Weaving"
+          Description = "Traditional basket weaving done under water for best effect."
+          Credits = 3
+          Department = FineArts
+      }
+
+```
+
 Let's see if your code builds. Do you remember how to do that?
 
 ```bash
@@ -909,16 +997,16 @@ dotnet build
 
 (wait for stickies)
 
-![testing](https://memegenerator.net/img/instances/84273421/that-cant-be-enough-lines-of-code.jpg
+![testing](https://memegenerator.net/img/instances/84286972/remember-kids-f-makes-it-easy-to-build-constraints-into-your-domain-model.jpg
  "Less boilerplate means more fun")
 
 ## Write tests against your domain code
 
-Now that we have some code we can write test against them.
+Now that we have some code we can write tests against it.
 
 First, we will need to reference the domain project in the test project so we can use that code.
 
-We can do everything by path, so we don't have to change directories. Let's try that.
+> Pro tip: We can do everything by path, so we don't have to change directories. Let's try that.
 
 Remember the usage?
 
@@ -1167,7 +1255,32 @@ Open `workshop.cli/Program.fs`.
 Here is some code.
 
 ```fsharp
+// Learn more about F# at http://fsharp.org
+
+open System
 open Argu
+open workshop.domain
+
+type CLIArguments =
+    | DepartmentCode of dept:int
+with
+    interface IArgParserTemplate with
+        member s.Usage =
+            match s with
+            | DepartmentCode _ -> "specify a course code."
+
+[<EntryPoint>]
+let main argv =
+    let errorHandler = ProcessExiter(colorizer = function ErrorCode.HelpText -> None | _ -> Some ConsoleColor.Red)
+    let parser = ArgumentParser.Create<CLIArguments>(programName = "workshop", errorHandler = errorHandler)
+    let cmd = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
+    printfn "I'm doing all the things!"
+    match cmd.TryGetResult(CLIArguments.DepartmentCode) with
+    | Some code -> printfn "The department name is [%s]" ((Workshop.getDepartment code).ToString())
+    | None      -> printfn "I could not understand the department code. Please see the usage."
+
+
+    0 // return an integer exit code
 ```
 
 Let's build it to check for errors:
@@ -1184,7 +1297,12 @@ Let's run it without building to save tme.
 dotnet run --no-build -p src/workshop.cli/
 ```
 
-Ooops! The CLI doesn't know what we want, but we didnt write any of that code. Argu did it for us!
+Ooops! The CLI doesn't know what we want, but we didnt write any of that code. 
+
+> Argu did it for us!
+
+![testing](https://memegenerator.net/img/instances/84273421/that-cant-be-enough-lines-of-code.jpg
+ "Less boilerplate means more fun")
 
 Let's try that a different way. `dotnet` has a way to pass custom parameters to `dotnet run`.
 
@@ -1215,6 +1333,8 @@ dotnet run --no-build -p src/workshop.cli/ -- --departmentcode 100
 ![testing](https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg "Argu and F# FTW")
 
 If we have time I will show more how to use Argu.
+
+(wait for stickies)
 
 ## Publish your code to ... somewhere
 
