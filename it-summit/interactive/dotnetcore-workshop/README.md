@@ -12,7 +12,7 @@ College of Medicine
 
 Cross-platform software development with .NET Core and F#.
 
-![review1](https://memegenerator.net/img/instances/84273260/tell-me-again-about-how-net-is-only-for-windows.jpg "Naw, it's cross-platform")
+![Willy Wonka](https://i.imgur.com/wZbJs1m.jpg "Ooompa loomp doopity doo.")
 
 ## Topics
 
@@ -331,7 +331,7 @@ Great success! You just:
 2. Ran the application with `dotnet run`
 3. And it worked!
 
-![demo worked](http://www.quickmeme.com/img/17/1782bf970d9fde6bc597871a032fdc7eee39a99dab42574b20120021edee633b.jpg "First step achievement unlocked")
+![demo worked](https://i.imgur.com/0DvVlTt.jpg "First step achievement unlocked")
 
 (wait for stickies)
 
@@ -493,7 +493,7 @@ We learned how to:
 
 (take a break and answer questions)
 
-![review1](https://memegenerator.net/img/instances/84268854/dotnet-created-two-projects-and-a-reference-so-i-guess-you-could-say-things-are-getting-pretty-serio.jpg "Things are getting pretty serious")
+![review1](https://i.imgur.com/7Nj8HcR.jpg "Things are getting pretty serious")
 
 ## Scaffold a test project
 
@@ -717,7 +717,7 @@ What happens when you `dotnet build` now?
 
 Awesome! This will save us time and typing effort and lessen our cognitive burden.
 
-![solution files](https://memegenerator.net/img/instances/84273244/sln-file-build-all-the-things.jpg "Great success!")
+![solution files](https://i.imgur.com/vAypKi8.jpg "Great success!")
 
 ## Domain model and domain logic
 
@@ -914,7 +914,7 @@ type Course =
 This means that for every instance of a Course type, you wil only be able to set the Name to a value that passes the CourseName constraints. Like this.
 
 ```fsharp
-let course =
+let testCourse =
   {
       Number = 9999
       Name = CourseName.create "Underwater Basket Weaving"
@@ -997,8 +997,9 @@ dotnet build
 
 (wait for stickies)
 
-![testing](https://memegenerator.net/img/instances/84286972/remember-kids-f-makes-it-easy-to-build-constraints-into-your-domain-model.jpg
- "Less boilerplate means more fun")
+![Remember](https://i.imgur.com/xqp7Yoh.jpg
+ "DSL plus contraints. Make impossible states impossible and easy to read.")
+
 
 ## Write tests against your domain code
 
@@ -1016,6 +1017,8 @@ Commands:
   package <PACKAGE_NAME>     Add a NuGet package reference to the project.
   reference <PROJECT_PATH>   Add a project-to-project reference to the project.
 ```
+
+Do it like this.
 
 ```bash
 dotnet add src/workshop.test reference src/workshop.domain
@@ -1135,7 +1138,7 @@ This looks good. We had one test and it passed. Yay!
 
 (wait for stickies)
 
-![very nice](https://memegenerator.net/img/instances/84277806/no-ui-but-unit-tests-so-i-got-that-going-for-me-which-is-nice.jpg "Automated unit tests and very nice")
+![very nice](https://i.imgur.com/UFVza3d.jpg "Automated unit tests and very nice")
 
 If we have time I'll take us through writing another test and talk about Expecto.
 
@@ -1189,16 +1192,16 @@ Your test should have failed.
 
 Now change the code back and see your test pass.
 
-![testing](https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fblairoracle.com%2Fwp-content%2Fuploads%2F2017%2F01%2Fma.jpg&f=1
- "Argu and F# FTW")
+![autobuild](https://i.imgur.com/m3pTOWn.jpg
+ "Build and test without using your hands!")
 
- > Stop the dotnet watch with `Ctl + C` or `Ctl + D`
+ > Stop the `dotnet watch` with `Ctl + C` or `Ctl + D`
 
 ## Write a command line tool
 
 Ok we are cooking with gas! Let's build a CLI. We are going to use a package called Argu that will help us quickly write a command line parser.
 
-## Add a package reference to Argu
+### Add a package reference to Argu
 
 In order to use Argu in `workshop.cli` we will need to pull in the package.
 
@@ -1252,7 +1255,7 @@ Let's try to use it in the CLI.
 
 Open `workshop.cli/Program.fs`.
 
-Here is some code.
+Here is the code.
 
 ```fsharp
 // Learn more about F# at http://fsharp.org
@@ -1261,6 +1264,7 @@ open System
 open Argu
 open workshop.domain
 
+//This is where we difine what options we accept on the command line
 type CLIArguments =
     | DepartmentCode of dept:int
 with
@@ -1272,9 +1276,13 @@ with
 [<EntryPoint>]
 let main argv =
     let errorHandler = ProcessExiter(colorizer = function ErrorCode.HelpText -> None | _ -> Some ConsoleColor.Red)
+
     let parser = ArgumentParser.Create<CLIArguments>(programName = "workshop", errorHandler = errorHandler)
+
     let cmd = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
+
     printfn "I'm doing all the things!"
+
     match cmd.TryGetResult(CLIArguments.DepartmentCode) with
     | Some code -> printfn "The department name is [%s]" ((Workshop.getDepartment code).ToString())
     | None      -> printfn "I could not understand the department code. Please see the usage."
@@ -1301,7 +1309,7 @@ Ooops! The CLI doesn't know what we want, but we didnt write any of that code.
 
 > Argu did it for us!
 
-![testing](https://memegenerator.net/img/instances/84273421/that-cant-be-enough-lines-of-code.jpg
+![testing](https://i.imgur.com/y4Fsz5U.jpg
  "Less boilerplate means more fun")
 
 Let's try that a different way. `dotnet` has a way to pass custom parameters to `dotnet run`.
@@ -1330,7 +1338,7 @@ Let's try passing the department code like this.
 dotnet run --no-build -p src/workshop.cli/ -- --departmentcode 100
 ```
 
-![testing](https://memegenerator.net/img/instances/84269068/needed-a-quick-cli-used-argu-and-f.jpg "Argu and F# FTW")
+![commandline](https://i.imgur.com/EwOCq50.jpg "Argu and F# FTW")
 
 If we have time I will show more how to use Argu.
 
@@ -1339,6 +1347,8 @@ If we have time I will show more how to use Argu.
 ## Publish your code to ... somewhere
 
 Ok let's say you are ready to publish your code. You want to share the working version with the world, but you don't want users to have to run the `dotnet` command. You want them to just use your cli. You can publish your command and all of its dependencies. You can then execute the command like you would any other program. You can even put a reference in your environment or `/usr/bin`. Whatever works for you.
+
+You can find out more in the Microsoft documentation [Deploy with CLI](https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli).
 
 Let's see the usage.
 
@@ -1406,7 +1416,6 @@ Unhandled Exception: System.IO.FileNotFoundException: Could not load file or ass
 
 Yep. This is because the way we published it means we need to use the dotnet command to run it. This means that if you give this to someone else to run, they will need to have dotnet installed. Let's try running it that way and then we will publish a standalone executable.
 
-https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli
 
 ```bash
 dotnet publish/workshop.cli.dll
@@ -1499,10 +1508,10 @@ That looks familiar. Let's give it a department code.
 
 (wait for stickies)
 
-![testing](https://memegenerator.net/img/instances/84279739/i-dont-always-publish-but-when-i-do-i-make-it-self-contained.jpg "Good guy greg uses dotnet core")
+![testing](https://i.imgur.com/VAb2LAA.jpg "The Most Interesting Man in the World uses .NET Core.")
 
 
-![testing](https://memegenerator.net/img/instances/84279720/builds-on-windows-publishes-cross-platform.jpg "Good guy greg uses dotnet core")
+![testing](https://i.imgur.com/Nwg6xRh.jpg "Good Guy Greg uses .NET core")
 
 ## use template to scaffold Saturn
 
