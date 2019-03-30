@@ -511,6 +511,8 @@ Expecto publishes a `dotnet` template that we can install and then use.
 
 Go to the [Expecto template on Github](https://github.com/MNie/Expecto.Template).
 
+> There are [lots of different templates available](https://github.com/dotnet/templating/wiki/Available-templates-for-dotnet-new). 
+
 You'll see instructions on how to install the template from Nuget (Nuget is a .NET package manager and repository).
 
 ```bash
@@ -1305,7 +1307,7 @@ Let's run it without building to save tme.
 dotnet run --no-build -p src/workshop.cli/
 ```
 
-Ooops! The CLI doesn't know what we want, but we didnt write any of that code. 
+`Ooops!` The CLI doesn't know what we want, but we didnt write any of that code. 
 
 > Argu did it for us!
 
@@ -1513,21 +1515,200 @@ That looks familiar. Let's give it a department code.
 
 ![testing](https://i.imgur.com/Nwg6xRh.jpg "Good Guy Greg uses .NET core")
 
-## use template to scaffold Saturn
+If we have time I will show how to create a web application using Saturn.
+
+## Web Application -- SAFE STACK
+
+You'll need to install the following pre-requisites in order to build SAFE applications
+
+* `dotnet tool install -g fake-cli`
+* `dotnet tool install -g paket`
+* node.js (>= 8.0)
+* yarn (>= 1.10.1) or npm
+
+### Install tools
+
+#### FAKE
+
+```bash
+dotnet tool install -g fake-cli
+```
+
+#### paket (package manager)
+
+```bash
+dotnet tool install -g paket
+```
+
+#### Node
+
+Find your install method [here](https://nodejs.org/en/download/package-manager/)
+
+Ubuntu
+```bash
+curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+#### Yarn
+
+Find your install instructions [here](https://yarnpkg.com/lang/en/docs/install/#windows-stable).
+
+Ubuntu example
+```bash
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+```
+
+### Scaffold SAFE stack app 
+
+#### Install the template
+
+```bash
+dotnet new -i SAFE.Template
+```
+
+#### Create the project
+
+```bash
+cd workshop.web
+```
+
+```bash
+dotnet new SAFE -lang F#
+```
+
+### Build and run using FAKE
+
+If you don't have a browser this might not work so good. If it works you should see a browser window or tab appear.
+
+```bash
+fake build --target run
+```
+
+> If you are using WSL, if you run the app you can access it from the Windows side with this URL:
+
+```text
+http://localhost:8080/
+```
+
+And there ya go. A fully functional web application in only a handful of steps.
+
 
 ## Open the build script and walk through it
 
-## use fake to build and run the default project
-
-## talk about the global file
-
 ## The dotnet goat path
 
+![goats](https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.quickmeme.com%2Fimg%2F46%2F46e64a12f117453efe8705526c25c467709cd30198aeaf592cfb76dc03d5a350.jpg&f=1 "Goat path to glory.")
 
+Review the templates.
 
-**********************************
-NOTES FOR FURTHER DEVELOPMENT
+```bash
+dotnet new --list
+```
 
-how to run tests -- two ways
-why? tests are executables
+Create your folder structure. Remember to be inside the folder where you want to create the project before creating the project.
 
+> By default, dotnet new will create a project with the same name as the folder you are in. There is an option to specify the project name (`-n, --name`), which also creates the folder. I like to create the folder ahead of time so I can work out the structure first.
+
+```bash
+dotnet new console -lang F#
+```
+
+This created a console app.
+
+### Build the console app
+
+```bash
+dotnet build <PATH TO CONSOLE PROJECT FOLDER>
+```
+
+### Create a class library inside the class library folder you created.
+
+```bash
+dotnet new classlib -lang F#
+```
+
+### Build the class library.
+
+```bash
+dotnet build <PATH TO LIBRARY PROJECT FOLDER>
+```
+
+### Create a test project inside the test project folder you created.
+
+If you want to use Expecto, you need to install the templates first.
+
+```bash
+dotnet new -i Expecto.Template::*
+```
+
+> There are [lots of templates out there](https://github.com/dotnet/templating/wiki/Available-templates-for-dotnet-new) for all kinds of projects. 
+
+```bash
+dotnet new expecto -lang F#
+```
+
+### Run tests
+
+```bash
+dotnet test <PATCH TO TEST PROJECT>
+```
+
+### Create a solution file to help build and test without specifying a `<PATH TO PROJECT FOLDER>`.
+
+> Put the solution file in a folder above the source code folder like this.
+
+```text
+sln
+    |
+    src
+        workshop.cli
+        workshop.domain
+```
+
+```bash
+dotnet new sln
+```
+
+> By default, this will create a solution file with the same name as the containing folder. You can use the option `-n` or `--name`.
+
+### Add projects to the soution file
+
+```bash
+dotnet sln add <PATH TO PROJECT FOLDER>
+```
+
+### Build using the sln file
+
+Make sure you are in the same folder as the soltion file. `dotnet` will look for the sln file and build everything in the file.
+
+```bash
+dotnet build
+```
+
+### Run test projects using the sln file
+
+```bash
+dotnet test
+```
+
+> dotnet will run any test project it finds in the solution file.
+
+### Run a cli using dotnet with arguments
+
+```bash
+dotnet run -p <PATH TO CONSOLE APP> -- --arg value
+```
+
+### Publish self-contained app to target operating system
+
+```bash
+dotnet publish -r <Runtime IDentifier> --self-contained -o <PATH TO PUBLISH FOLDER> <PATH TO CONSOLE PROJECT>
+```
+
+### Run the published app
+
+```bash
+.<PATH TO PUBLISHED EXECUTEABLE> --argu value
+```
