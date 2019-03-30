@@ -12,6 +12,8 @@ College of Medicine
 
 Cross-platform software development with .NET Core and F#.
 
+This is the script I will follow but it can be used to learn or practice on your own.
+
 ![Willy Wonka](https://i.imgur.com/wZbJs1m.jpg "Ooompa loomp doopity doo.")
 
 ## Topics
@@ -29,7 +31,7 @@ Cross-platform software development with .NET Core and F#.
   * Union types and record types for elegant domain modeling and enforcing constraints
   * Using [Argu](https://fsprojects.github.io/Argu/) to quickly build a command-line tool
   * Using [Expecto](https://github.com/haf/expecto) to write tests
-  * Using [Saturn](https://saturnframework.org/) to create web applications
+  * Using [SAFE stak](https://safe-stack.github.io/) to create web applications
   * Using [FAKE](https://fake.build/) to build, test, run, and deploy applications
 
 ## Workshop requirements
@@ -182,6 +184,8 @@ This is a class library that can be referenced by other projects. It cannot be e
 
 A solution file defines a set of projects that are related to each other. This is helpful in IDEs like Visual Studio Code and Visual Studio. The IDEs can use the solution file to organize your projects. The solution file can also help with the compiler.
 
+![Business cat](https://i.imgur.com/jQdT64R.jpg "Cats run the Internet!")
+
 ## Use `dotnet new` to scaffold projects
 
 First we need a solution structure. This is what I will use and is similar to what I usually do. This mostly follows the principles of `clean architecture` or `onion architecture`.
@@ -212,6 +216,7 @@ mkdir src/workshop.web
 ```
 
 (Create your folder structure now)
+
 (Wait for green stickies)
 
 ### Scaffold a new console application
@@ -259,7 +264,7 @@ This where all your code will go. This is the entry point for execution.
 
 #### workshop.cli.fsproj
 
-`proj` files are common to all .NET projects. This defines what files are associated with the project and the compiler will use the `proj` file to know what code to compile.
+`proj` files are common to all .NET projects. This defines what files are associated with the project, and the compiler will use the `proj` file to know what code to compile.
 
 ## Run a console project
 
@@ -433,7 +438,7 @@ Arguments:
   <PROJECT>   The project file to operate on. If a file is not specified, the command will search the current directory for one.
 ```
 
-This is the path/project file to the project to which you want to add the reference. In this case it is the path to the `workshop.cli` project file. We will see this later.
+`<PROJECT>` is the path/project file to the project to which you want to add the reference. In this case it is the path to the `workshop.cli` project file. We will see this later.
 
 ```text
 Commands:
@@ -441,7 +446,7 @@ Commands:
   reference <PROJECT_PATH>   Add a project-to-project reference to the project.
 ```
 
-* <PROJECT_PATH> is the path to the class library you want to use in your project.
+<PROJECT_PATH> is the path to the class library you want to use in your project.
 
 How would we reference `workshop.domain` from `workshop.cli`?
 
@@ -474,9 +479,9 @@ type workshop.cli\workshop.cli.fsproj
 Notice this XML element:
 
 ```xml
- <ItemGroup>
+<ItemGroup>
     <ProjectReference Include="..\workshop.domain\workshop.domain.fsproj" />
-  </ItemGroup>
+</ItemGroup>
 ```
 
 (wait for stickies)
@@ -505,7 +510,7 @@ cd ../workshop.test
 
 > Pro tip: tab complete is your best friend.
 
-`dotnet new` comes with templates for creating xUnit and nUnit test projects. Those are great, but let's use something for `functional programming oriented.` Let's use `Expecto`. 
+`dotnet new` comes with templates for creating xUnit and nUnit test projects. Those are great, but let's use something `functional programming oriented.` Let's use `Expecto`. 
 
 Expecto publishes a `dotnet` template that we can install and then use.
 
@@ -579,11 +584,14 @@ Here we see a report of the number of tests that failed, were ignored, and passe
 
 We will write more tests later.
 
+![Imgur](https://i.imgur.com/ZulrmEf.jpg "100% code coverage you will have.")
+
 ## Solution file
 
 Let's create a solution file so we can tie all of our projects together. The solution provides these benefits:
 
-* `dotnet build` all of our projects at one time
+* `dotnet build` all of our projects at once
+* `dotnet test` all of you test projects at once
 * Visual Studio and Visual Studio Code use the solution file to organize projects
 
 Go up two levels so you are now in the `interactive-workshop` folder.
@@ -602,7 +610,7 @@ pwd
 cd
 ```
 
-### dotnet build wihtout a solution file
+### dotnet build without a solution file
 
 Let's try building (compiling) code without a solution file.
 
@@ -633,6 +641,14 @@ dir
 ```
 
 Notice that `dotnet new` created a solution file with the same name as the folder.
+
+Did you see this file?
+
+```text
+interactive-workshop.sln
+```
+
+Let's see what is inside.
 
 ```bash
 cat interactive-workshop.sln
@@ -866,7 +882,7 @@ module Workshop =
     type Course =
         {
             Number      : int
-            Name        : CourseName
+            Name        : string
             Description : string
             Credits     : int
             Department  : Department
@@ -882,7 +898,7 @@ Number        int       5 digits, less than 100000
 Name          string    100 chars
 ```
 
-Let's do name first.
+Let's do `Name` first.
 
 Copy and paste this above `type Course`, and I will explain it.
 
@@ -913,7 +929,16 @@ type Course =
     }
 ```
 
-This means that for every instance of a Course type, you wil only be able to set the Name to a value that passes the CourseName constraints. Like this.
+(wait for stickies)
+
+This means that for every instance of a Course type, you will only be able to set the Name to a value that passes the CourseName constraints. Like this.
+
+```fsharp
+Name = CourseName.create "Underwater Basket Weaving"
+```
+
+Create a testCourse like this.
+
 
 ```fsharp
 let testCourse =
@@ -1009,7 +1034,7 @@ Now that we have some code we can write tests against it.
 
 First, we will need to reference the domain project in the test project so we can use that code.
 
-> Pro tip: We can do everything by path, so we don't have to change directories. Let's try that.
+> Pro tip: We can do everything by path, so we don't have to change directories. 
 
 Remember the usage?
 
@@ -1085,7 +1110,9 @@ let tests =
 
 Save the file.
 
-Now we need to add the file to the project file. This is to the compiler knows what to compile. Plus, in F# the order of the files matters.
+Now we need to add the file to the project file. This is so the compiler knows what to compile. 
+
+> In F# the order of the files matters. The proj file specifies the order of the files.
 
 Open `workshop.test.fsproj`. Add the file in the right order. Also, let's remove the `Samples.fs` file to keep it simple.
 
@@ -1160,9 +1187,13 @@ Examples:
   dotnet watch test
 ```
 
+The watch command.
+
 ```bash
 dotnet watch -p src/workshop.test test
 ```
+
+The output.
 
 ```text
 watch : Started
@@ -1184,7 +1215,15 @@ watch : Waiting for a file to change before restarting dotnet...
 
 Neat!
 
-Ok, now what would happen if I changed the domain model? Let's try it.
+Notice `dotnet`is patiently waiting for files to change.
+
+```text
+watch : Waiting for a file to change before restarting dotnet...
+```
+
+(wait for stickies)
+
+Ok, now what would happen with the watched tests if I changed the domain model? Let's try it.
 
 In `workshop.domain` change the Engineer code to 500 and then check back in your command line.
 
@@ -1199,9 +1238,11 @@ Now change the code back and see your test pass.
 
  > Stop the `dotnet watch` with `Ctl + C` or `Ctl + D`
 
-## Write a command line tool
+ (wait for stickies)
 
-Ok we are cooking with gas! Let's build a CLI. We are going to use a package called Argu that will help us quickly write a command line parser.
+## Build a command line tool
+
+Ok we are cooking with gas! Let's build a CLI. We are going to use a package called `Argu` that will help us quickly write a command line parser.
 
 ### Add a package reference to Argu
 
@@ -1307,7 +1348,7 @@ Let's run it without building to save tme.
 dotnet run --no-build -p src/workshop.cli/
 ```
 
-`Ooops!` The CLI doesn't know what we want, but we didnt write any of that code. 
+`Ooops!` The CLI doesn't know what we want, but we didn't write any of that code. 
 
 > Argu did it for us!
 
@@ -1447,6 +1488,8 @@ dotnet publish --self-contained -o ../../publish src/workshop.cli
 
 (wait for stickies)
 
+![testing](https://i.imgur.com/VAb2LAA.jpg "The Most Interesting Man in the World uses .NET Core.")
+
 Did you get an error? 
 
 ```text
@@ -1510,7 +1553,6 @@ That looks familiar. Let's give it a department code.
 
 (wait for stickies)
 
-![testing](https://i.imgur.com/VAb2LAA.jpg "The Most Interesting Man in the World uses .NET Core.")
 
 
 ![testing](https://i.imgur.com/Nwg6xRh.jpg "Good Guy Greg uses .NET core")
@@ -1665,6 +1707,7 @@ sln
     src
         workshop.cli
         workshop.domain
+        workshop.test
 ```
 
 ```bash
