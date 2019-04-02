@@ -31,7 +31,7 @@ This is the script I will follow but it can be used to learn or practice on your
   * Union types and record types for elegant domain modeling and enforcing constraints
   * Using [Argu](https://fsprojects.github.io/Argu/) to quickly build a command-line tool
   * Using [Expecto](https://github.com/haf/expecto) to write tests
-  * Using [SAFE stak](https://safe-stack.github.io/) to create web applications
+  * Using [SAFE stack](https://safe-stack.github.io/) to create web applications
   * Using [FAKE](https://fake.build/) to build, test, run, and deploy applications
 
 ## Workshop requirements
@@ -467,7 +467,7 @@ Let's see what happened to the proj file. Let's print the content to the screen.
 BaSH/Terminal
 
 ```bash
-cat workshop.cli\workshop.cli.fsproj
+cat workshop.cli/workshop.cli.fsproj
 ```
 
 DoS
@@ -505,7 +505,7 @@ We learned how to:
 First, get yourself into the `workshop.test` folder.
 
 ```bash
-cd ../workshop.test
+cd workshop.test
 ```
 
 > Pro tip: tab complete is your best friend.
@@ -564,7 +564,7 @@ Notice that we have a `proj` file and two sample test files.
 
 ### Run the tests
 
-We can use `dotnet run` to run tests because technically they are console apps with a  bit of extra code scaffolded to create sample tests.
+We can use `dotnet run` or `dotnet test` to run tests because technically they are console apps with a  bit of extra code scaffolded to create sample tests.
 
 Let's try it.
 
@@ -581,6 +581,12 @@ You should see a bunch of output and stuff that looks like errors. That's ok. So
 Here we see a report of the number of tests that failed, were ignored, and passed.
 
 (wait for stickies)
+
+Let's see it with `dotnet test`
+
+```bash
+dotnet test
+```
 
 We will write more tests later.
 
@@ -723,8 +729,8 @@ Time Elapsed 00:00:11.74
 Great! That worked. Now try to add the `.cli` and `.test` projects.
 
 ```bash
-dotnet sln add workshop.cli
-dotnet sln add workshop.test
+dotnet sln add src/workshop.cli
+dotnet sln add src/workshop.test
 ```
 
 (wait for stickies)
@@ -742,7 +748,7 @@ Awesome! This will save us time and typing effort and lessen our cognitive burde
 Get yourself to the `workshop.domain` folder. Let's code our domain with a little F#.
 
 ```bash
-cd ../workshop.domain
+cd src/workshop.domain
 ```
 
 ### The domain
@@ -914,6 +920,12 @@ module CourseName =
 
 This makes it so that you can **only** create a CourseName type things through the create function.
 
+Try to build to check for errors:
+
+```bash
+dotnet build
+```
+
 (wait for stickies)
 
 Now that we have a `CourseName` type we can make the Name field in course that type. Like this.
@@ -1043,6 +1055,18 @@ Usage: dotnet add [options] <PROJECT> [command]
 Commands:
   package <PACKAGE_NAME>     Add a NuGet package reference to the project.
   reference <PROJECT_PATH>   Add a project-to-project reference to the project.
+```
+
+First go to the top level folder:
+
+Bash/Terminal
+```bash
+cd ../..
+```
+
+DoS
+```
+cd ..\..
 ```
 
 Do it like this.
@@ -1225,11 +1249,28 @@ watch : Waiting for a file to change before restarting dotnet...
 
 Ok, now what would happen with the watched tests if I changed the domain model? Let's try it.
 
-In `workshop.domain` change the Engineer code to 500 and then check back in your command line.
+In `workshop.domain` change the 
+
+```fsharp
+Engineering course code to 500 
+
+| Engineering   -> 500
+```
+
+and then check back in your command line.
 
 > Those of you not using a desktop, maybe you can use screen? Or just play along. I will demo.
 
 Your test should have failed.
+
+```text
+Failed   Course Tests/Engineering convert to code 100
+Error Message:
+
+Engineering course code should be 100.
+expected: 100
+  actual: 500
+```
 
 Now change the code back and see your test pass.
 
@@ -1296,7 +1337,7 @@ dotnet add src/workshop.test reference src/workshop.domain
 
 Let's try to use it in the CLI.
 
-Open `workshop.cli/Program.fs`.
+Open `src/workshop.cli/Program.fs`.
 
 Here is the code.
 
@@ -1348,9 +1389,8 @@ Let's run it without building to save tme.
 dotnet run --no-build -p src/workshop.cli/
 ```
 
-`Ooops!` The CLI doesn't know what we want, but we didn't write any of that code. 
+`Ooops!` The CLI doesn't know what we want. Argu helped us write that handling in just a few lines. 
 
-> Argu did it for us!
 
 ![testing](https://i.imgur.com/y4Fsz5U.jpg
  "Less boilerplate means more fun")
@@ -1441,14 +1481,16 @@ dir publish
 
 We have a lot of stuff in there. 
 
-Let's try that.
+Let's try to run the published version.
 
+BaSH/Terminal
 ```bash
 ./publish/workshop.cli.dll
 ```
 
+DoS
 ```dos
-publish\workshop.cli.exe
+publish\workshop.cli.dll
 ```
 
 What happened? Did you get an error?
