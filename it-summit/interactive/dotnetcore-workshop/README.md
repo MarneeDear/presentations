@@ -80,6 +80,10 @@ This is the folder where we will do all of our work for the rest of the workshop
 
 (wait for green stickies)
 
+## The .NET Target Frameworks
+
+[Target frameworks and what they mean.](https://docs.microsoft.com/en-us/dotnet/standard/frameworks)
+
 ## .NET Core CLI
 
 The .NET Core CLI has a number of commands to help you:
